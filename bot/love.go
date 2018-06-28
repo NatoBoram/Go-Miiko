@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/NatoBoram/Go-Miiko/commands"
-	"github.com/NatoBoram/Go-Miiko/wheel"
-
 	"github.com/bwmarrin/discordgo"
+
+	"gitlab.com/NatoBoram/Go-Miiko/commands"
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 func love(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) bool {

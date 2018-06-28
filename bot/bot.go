@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NatoBoram/Go-Miiko/commands"
 	"github.com/bwmarrin/discordgo"
+
+	"gitlab.com/NatoBoram/Go-Miiko/commands"
 )
 
 var (

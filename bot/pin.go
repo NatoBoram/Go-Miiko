@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/NatoBoram/Go-Miiko/wheel"
 	"github.com/bwmarrin/discordgo"
+
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {

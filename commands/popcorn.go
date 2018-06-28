@@ -7,8 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/NatoBoram/Go-Miiko/wheel"
 	"github.com/bwmarrin/discordgo"
+
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 // Popcorn command
