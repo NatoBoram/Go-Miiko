@@ -2,7 +2,7 @@ image: golang:1.10.1
 
 before_script:
   - go clean
-  - go get -u -v -fix github.com/bwmarrin/discordgo
+  - go get ./...
 
 build:
   stage: build
