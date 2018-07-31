@@ -1,0 +1,15 @@
+image: golang:1.10.1
+
+before_script:
+  - go clean
+
+build:
+  stage: build
+  script:
+    - go build
+
+test:
+  stage: test
+  script:
+    - go test ./...
+  allow_failure: true
