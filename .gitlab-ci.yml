@@ -18,5 +18,5 @@ gosec:
   stage: test
   script:
     - go get -u -v -fix github.com/securego/gosec
-    - gosec .
+    - $GOPATH/bin/gosec .
   allow_failure: true
