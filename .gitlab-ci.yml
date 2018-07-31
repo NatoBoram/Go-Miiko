@@ -1,6 +1,7 @@
 image: golang:1.10.1
 
 before_script:
+  - go get ./...
   - go clean
 
 build:
