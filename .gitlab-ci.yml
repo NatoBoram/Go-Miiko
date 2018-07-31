@@ -1,7 +1,7 @@
 image: golang:1.10.1
 
 before_script:
-  - go get ./...
+  - go get -u -v -fix gitlab.com/NatoBoram/Go-Miiko
   - go clean
 
 build:
