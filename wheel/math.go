@@ -22,3 +22,13 @@ func MinInt(x, y int) int {
 	}
 	return y
 }
+
+// StringInSlice checks if a string is inside a slice.
+func StringInSlice(str string, list []string) bool {
+	for _, item := range list {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}

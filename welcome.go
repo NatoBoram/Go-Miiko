@@ -1,4 +1,4 @@
-package bot
+package main
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) 
 
 	// Get welcome channel
 	var cid string
-	err := DB.QueryRow("select `channel` from `welcome` where `server` = ?", g.ID).Scan(&cid)
+	err := db.QueryRow("select `channel` from `welcome` where `server` = ?", g.ID).Scan(&cid)
 	if err != nil {
 		fmt.Println("Couldn't select the welcome channel of", g.Name+".")
 		return
@@ -52,7 +52,7 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) 
 			fmt.Println(err.Error())
 		}
 
-	} else if m.User.ID != Me.ID {
+	} else if m.User.ID != me.ID {
 
 		// Fear the bot!
 		_, err = s.ChannelMessageSend(channel.ID, getWelcomeBotMessage(m.User.ID))
