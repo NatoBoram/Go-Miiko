@@ -1,32 +1,89 @@
 drop database `Miiko`;
-create database if not exists `Miiko` default character set utf8;
+create database if not exists `Miiko` default character set utf8mb4;
 use `Miiko`;
-
--- Drop View
--- drop view `love`;
 
 -- Drop Table
 drop table if exists `pins`;
 drop table if exists `welcome`;
+drop table if exists `role-absynthe`;
+drop table if exists `role-shadow`;
+drop table if exists `role-obsidian`;
+drop table if exists `role-moderator`;
+drop table if exists `role-administrator`;
 
 -- Create Table
 
--- Servers
+-- Channels
+
+-- Welcome Channel
 create table if not exists `welcome` (
 	`server` varchar(32) primary key,
 	`channel` varchar(32) not null
-) engine=InnoDB default charset=utf8;
+) engine=InnoDB default charset=utf8mb4;
+
+-- Messages
 
 -- Pins
 create table if not exists `pins` (
 	`server` varchar(32) not null,
 	`message` varchar(32) primary key,
 	`member` varchar(32) not null
-) engine=InnoDB default charset=utf8;
+) engine=InnoDB default charset=utf8mb4;
+
+-- Roles
+
+-- Administrator
+create table if not exists `role-administrator` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Moderator
+create table if not exists `role-moderator` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Light
+create table if not exists `role-light` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Absynthe
+create table if not exists `role-absynthe` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Obsidian
+create table if not exists `role-obsidian` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Shadow
+create table if not exists `role-shadow` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Guardless
+create table if not exists `role-eel` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Non-Playing Characters
+create table if not exists `role-npc` (
+	`server` varchar(32) primary key,
+	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
 
 -- Views
--- drop view `love`;
--- drop view `pins-count`;
+
+drop view `love`;
+drop view `pins-count`;
 
 -- Pins Count
 create view `pins-count` as
