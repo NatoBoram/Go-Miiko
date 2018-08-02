@@ -134,7 +134,7 @@ func getMentionnedGuard(m *discordgo.Message) []string {
 	if strings.Contains(strings.ToLower(m.Content), "ombr") {
 		gardes = append(gardes, "Ombre")
 	}
-	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") {
+	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") || strings.Contains(strings.ToLower(m.Content), "commencé") {
 		gardes = append(gardes, "Eel")
 	}
 	if strings.Contains(strings.ToLower(m.Content), "joue pas") || strings.Contains(strings.ToLower(m.Content), " quoi") {
