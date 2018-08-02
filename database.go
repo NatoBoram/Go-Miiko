@@ -18,21 +18,21 @@ func toConnectionString(database Database) string {
 // Select Welcome Channel
 
 func selectWelcomeChannel(g *discordgo.Guild) (id string, err error) {
-	err = db.QueryRow("select `channel` from `welcome` where server = ?;", g.ID).Scan(&id)
+	err = db.QueryRow("select `channel` from `"+tableWelcome+"` where server = ?;", g.ID).Scan(&id)
 	return id, err
 }
 
 // Insert Welcome Channel
 
 func insertWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	res, err = tx.Exec("insert into `welcome`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
+	res, err = tx.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 	return res, err
 }
 
 // Update Welcome Channel
 
 func updateWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	res, err = tx.Exec("update `welcome` set `channel` = ? where `server` = ?;", c.ID, g.ID)
+	res, err = tx.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 	return res, err
 }
 
@@ -51,7 +51,7 @@ func updateWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) 
 // Select Role
 
 func selectRole(g *discordgo.Guild, table string) (id string, err error) {
-	err = db.QueryRow("select `role` from ? where server = ?;", table, g.ID).Scan(&id)
+	err = db.QueryRow("select `role` from `"+table+"` where server = ?;", g.ID).Scan(&id)
 	return id, err
 }
 
@@ -90,7 +90,7 @@ func selectRoleNPC(g *discordgo.Guild) (id string, err error) {
 // Insert Role
 
 func insertRole(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return tx.Exec("insert into ?(server, role) values(?, ?);", table, g.ID, r.ID)
+	return tx.Exec("insert into "+table+"(server, role) values(?, ?);", g.ID, r.ID)
 }
 
 func insertRoleAdmin(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
@@ -128,7 +128,7 @@ func insertRoleNPC(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.R
 // Update Role
 
 func updateRole(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return tx.Exec("update ? set role = ? where server = ;", table, r.ID, g.ID)
+	return tx.Exec("update `"+table+"` set role = ? where server = ;", table, r.ID, g.ID)
 }
 
 func updateRoleAdmin(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
