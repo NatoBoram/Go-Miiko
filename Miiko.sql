@@ -21,6 +21,12 @@ create table if not exists `welcome` (
 	`channel` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4;
 
+-- Presentation Channel
+create table if not exists `channel-presentation` (
+	`server` varchar(32) primary key,
+	`channel` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
 -- Messages
 
 -- Pins
