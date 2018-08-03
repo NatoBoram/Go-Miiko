@@ -1,19 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 )
 
 func testInsertWelcomeChannel() {
-
-	// Begin transaction
-	tx, err := db.Begin()
-	if err != nil {
-		fmt.Println("Couldn't begin a transaction.")
-		fmt.Println(err.Error())
-		return
-	}
 
 	// Get guild
 	guild, err := session.Guild("365011717375262720")
@@ -32,7 +25,7 @@ func testInsertWelcomeChannel() {
 	}
 
 	// Insert Welcome Channel
-	res, err := insertWelcomeChannel(tx, guild, channel)
+	res, err := insertWelcomeChannel(guild, channel)
 	if err != nil {
 		fmt.Println("Couldn't insert a welcome channel.")
 		fmt.Println(err.Error())
@@ -57,13 +50,32 @@ func testInsertWelcomeChannel() {
 	}
 	fmt.Println("RowsAffected :", ra)
 
-	// Rollback
-	err = tx.Rollback()
+	os.Exit(0)
+}
+
+func testSelectNothing() {
+
+	// Get guild
+	guild, err := session.Guild("365011717375262720")
 	if err != nil {
-		fmt.Println("Couldn't rollback.")
+		fmt.Println("Couldn't get a guild.")
 		fmt.Println(err.Error())
 		return
 	}
 
+	// Select a presentation channel
+	pc, err := selectPresentationChannel(guild)
+	if err != nil {
+		fmt.Println("Couldn't select this presentation channel.")
+		fmt.Println(err.Error())
+
+		if err == sql.ErrNoRows {
+			fmt.Println("The error is", "sql: no rows in result set")
+		}
+
+		return
+	}
+
+	fmt.Println("Presentation Channel :", pc)
 	os.Exit(0)
 }

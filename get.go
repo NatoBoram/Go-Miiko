@@ -16,7 +16,15 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 			// Get Welcome Channel
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
-					GetWelcomeChannelCommand(db, s, g, c)
+					getWelcomeChannelCommand(g, c)
+				}
+			}
+			break
+		case "presentation":
+			// Get Presentation Channel
+			if len(ms) > 3 {
+				if ms[3] == "channel" {
+					getPresentationChannelCommand(g, c)
 				}
 			}
 			break
@@ -33,19 +41,19 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 }
 
 // GetWelcomeChannelCommand send the welcome channel to an user.
-func GetWelcomeChannelCommand(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 
-	welcome, err := GetWelcomeChannel(db, s, g, c)
+	// Get the welcome channel
+	channel, err := getWelcomeChannel(g)
 	if err != nil {
-		fmt.Println(err.Error())
+		session.ChannelMessageSend(c.ID, "Il n'y a pas de salon de bienvenue.")
 		return
 	}
 
 	// Send the welcome channel
-	s.ChannelTyping(c.ID)
-	_, err = s.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+welcome.ID+">.")
+	session.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+channel.ID+">.")
 	if err != nil {
-		fmt.Println("Couldn't send a message.")
+		fmt.Println("Couldn't send the welcome channel.")
 		fmt.Println("Guild : " + g.Name)
 		fmt.Println("Channel : " + c.Name)
 		fmt.Println(err.Error())
@@ -53,59 +61,21 @@ func GetWelcomeChannelCommand(db *sql.DB, s *discordgo.Session, g *discordgo.Gui
 	}
 }
 
-// GetWelcomeChannel gets the welcome channel
-func GetWelcomeChannel(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) (*discordgo.Channel, error) {
+func getPresentationChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 
-	// Does it exists?
-	var exists int
-	err := db.QueryRow("select count(`channel`) from `welcome` where `server` = ?;", g.ID).Scan(&exists)
+	// Get the presentation channel
+	channel, err := getPresentationChannel(g)
 	if err != nil {
-		fmt.Println("Could not confirm the existence of a welcome channel.")
-		fmt.Println("Guild :", g.Name)
-		fmt.Println("Channel :", c.Name)
-		return nil, err
-
-	} else if exists == 0 {
-
-		// Set this one if it doesn't exist.
-		err := SetWelcomeChannel(db, s, g, c)
-		if err != nil {
-			return nil, err
-		}
-		return c, nil
-
-	} else if exists == 1 {
-
-		// Get the welcome channel's ID
-		var welcome string
-		err = db.QueryRow("select `channel` from `welcome` where `server` = ?;", g.ID).Scan(&welcome)
-		if err != nil {
-			fmt.Println("Could not select a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("Channel :", c.Name)
-			return nil, err
-		}
-
-		// Does the channel still exists?
-		channel, err := s.Channel(welcome)
-		if err != nil {
-			fmt.Println("Couldn't get the channel structure of a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("ChannelID : " + welcome)
-			fmt.Println(err.Error())
-
-			// Set this one if it doesn't exist.
-			err := SetWelcomeChannel(db, s, g, c)
-			if err != nil {
-				return nil, err
-			}
-			return c, nil
-		}
-
-		// It exists!
-		return channel, nil
+		session.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
+		return
 	}
 
-	// Unreachable code.
-	return c, err
+	session.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
+	if err != nil {
+		fmt.Println("Couldn't send the presentation channel.")
+		fmt.Println("Guild : " + g.Name)
+		fmt.Println("Channel : " + c.Name)
+		fmt.Println(err.Error())
+		return
+	}
 }

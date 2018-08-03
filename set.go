@@ -13,11 +13,21 @@ func Set(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 	if len(ms) > 2 {
 		switch ms[2] {
 		case "welcome":
-			// Get Welcome Channel
+			// Set Welcome Channel
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
 					if m.Author.ID == g.OwnerID {
-						SetWelcomeChannelCommand(db, s, g, c)
+						setWelcomeChannelCommand(g, c)
+					}
+				}
+			}
+			break
+		case "presentation":
+			// Set Presentation Channel
+			if len(ms) > 3 {
+				if ms[3] == "channel" {
+					if m.Author.ID == g.OwnerID {
+						setPresentationChannelCommand(g, c)
 					}
 				}
 			}
@@ -26,79 +36,51 @@ func Set(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 	}
 }
 
-// SetWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
-func SetWelcomeChannelCommand(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+// setWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
+func setWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 
-	err := SetWelcomeChannel(db, s, g, c)
+	// Set the welcome channel
+	_, err := setWelcomeChannel(g, c)
 	if err != nil {
+		fmt.Println("Couldn't set the welcome channel.")
+		fmt.Println("Guild :", g.Name)
+		fmt.Println("Channel :", c.Name)
 		fmt.Println(err.Error())
 		return
 	}
 
-	// Announce the new welcome channel
-	s.ChannelTyping(c.ID)
-	_, err = s.ChannelMessageSend(c.ID, "D'accord! <#"+c.ID+"> est maintenant le salon de bienvenue.")
+	// Send feedback
+	session.ChannelTyping(c.ID)
+	_, err = session.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't announce the new welcome channel.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println("Channel : " + c.Name)
+		fmt.Println("Guild :", g.Name)
+		fmt.Println("Channel :", c.Name)
 		fmt.Println(err.Error())
+		return
 	}
 }
 
-// SetWelcomeChannel sets the welcome channel
-func SetWelcomeChannel(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) error {
+func setPresentationChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 
-	var exists int
-	err := db.QueryRow("select count(`channel`) from `welcome` where `server` = ?;", g.ID).Scan(&exists)
+	// Set the presentation channel
+	_, err := setPresentationChannel(g, c)
 	if err != nil {
-		fmt.Println("Could not confirm the existence of a welcome channel.")
+		fmt.Println("Couldn't set a presentation channel.")
 		fmt.Println("Guild :", g.Name)
 		fmt.Println("Channel :", c.Name)
-		return err
-
-	} else if exists == 1 {
-
-		// Prepare
-		stmt, err := db.Prepare("update `welcome` set `channel` = ? where `server` = ?;")
-		if err != nil {
-			fmt.Println("Could not prepare to update a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("Channel :", c.Name)
-			return err
-		}
-		defer stmt.Close()
-
-		// Update
-		_, err = stmt.Exec(c.ID, g.ID)
-		if err != nil {
-			fmt.Println("Could not update a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("Channel :", c.Name)
-			return err
-		}
-
-	} else if exists == 0 {
-
-		// Prepare
-		stmt, err := db.Prepare("insert into `welcome`(`server`, `channel`) values(?, ?);")
-		if err != nil {
-			fmt.Println("Could not prepare to insert a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("Channel :", c.Name)
-			return err
-		}
-		defer stmt.Close()
-
-		// Insert
-		_, err = stmt.Exec(g.ID, c.ID)
-		if err != nil {
-			fmt.Println("Could not insert a welcome channel.")
-			fmt.Println("Guild :", g.Name)
-			fmt.Println("Channel :", c.Name)
-			return err
-		}
+		fmt.Println(err.Error())
+		return
 	}
 
-	return nil
+	// Send feedback
+	session.ChannelTyping(c.ID)
+	_, err = session.ChannelMessageSend(c.ID, "Le salon de présentation est maintenant <#"+c.ID+">.")
+	if err != nil {
+		fmt.Println("Couldn't announce the new presentation channel.")
+		fmt.Println("Guild :", g.Name)
+		fmt.Println("Channel :", c.Name)
+		fmt.Println(err.Error())
+		return
+	}
 }

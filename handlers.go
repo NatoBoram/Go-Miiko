@@ -67,7 +67,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Update welcome channel
 	if m.Type == discordgo.MessageTypeGuildMemberJoin {
-		SetWelcomeChannel(db, s, guild, channel)
+		setWelcomeChannel(guild, channel)
 		return
 	}
 

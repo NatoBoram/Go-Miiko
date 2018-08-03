@@ -24,14 +24,14 @@ func selectWelcomeChannel(g *discordgo.Guild) (id string, err error) {
 
 // Insert Welcome Channel
 
-func insertWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	return tx.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
+func insertWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
 // Update Welcome Channel
 
-func updateWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	return tx.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
+func updateWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
 
 // Pins
@@ -87,78 +87,78 @@ func selectRoleNPC(g *discordgo.Guild) (id string, err error) {
 
 // Insert Role
 
-func insertRole(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return tx.Exec("insert into "+table+"(server, role) values(?, ?);", g.ID, r.ID)
+func insertRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
+	return db.Exec("insert into "+table+"(server, role) values(?, ?);", g.ID, r.ID)
 }
 
-func insertRoleAdmin(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableAdmin)
+func insertRoleAdmin(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableAdmin)
 }
 
-func insertRoleMod(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleMod(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
-func insertRoleLight(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleLight(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
-func insertRoleAbsynthe(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleAbsynthe(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
-func insertRoleObsidian(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleObsidian(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
-func insertRoleShadow(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+func insertRoleShadow(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
 
-	return insertRole(tx, g, r, tableMod)
+	return insertRole(g, r, tableMod)
 }
-func insertRoleEel(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleEel(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
-func insertRoleNPC(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return insertRole(tx, g, r, tableMod)
+func insertRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return insertRole(g, r, tableMod)
 }
 
 // Update Role
 
-func updateRole(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return tx.Exec("update `"+table+"` set role = ? where server = ;", table, r.ID, g.ID)
+func updateRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
+	return db.Exec("update `"+table+"` set role = ? where server = ;", table, r.ID, g.ID)
 }
 
-func updateRoleAdmin(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableAdmin)
+func updateRoleAdmin(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableAdmin)
 }
 
-func updateRoleMod(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableMod)
+func updateRoleMod(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableMod)
 }
 
-func updateRoleLight(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableLight)
+func updateRoleLight(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableLight)
 }
 
-func updateRoleAbsynthe(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableAbsynthe)
+func updateRoleAbsynthe(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableAbsynthe)
 }
 
-func updateRoleObsidian(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableObsidian)
+func updateRoleObsidian(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableObsidian)
 }
 
-func updateRoleShadow(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableShadow)
+func updateRoleShadow(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableShadow)
 }
 
-func updateRoleEel(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableEel)
+func updateRoleEel(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableEel)
 }
 
-func updateRoleNPC(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return updateRole(tx, g, r, tableNPC)
+func updateRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return updateRole(g, r, tableNPC)
 }
 
 // Presentation Channel
@@ -172,12 +172,12 @@ func selectPresentationChannel(g *discordgo.Guild) (id string, err error) {
 
 // Insert Presentation Channel
 
-func insertPresentationChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	return tx.Exec("insert into `"+tablePresentation+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
+func insertPresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tablePresentation+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
 // Update Presentation Channel
 
-func updatePresentationChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	return tx.Exec("update `"+tablePresentation+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
+func updatePresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("update `"+tablePresentation+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
