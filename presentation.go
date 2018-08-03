@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -15,8 +16,12 @@ func askForIntroduction(g *discordgo.Guild, c *discordgo.Channel) {
 		return
 	}
 
-	session.ChannelMessageSend(c.ID, getIntroductionMessage(channel))
-
+	_, err = session.ChannelMessageSend(c.ID, getIntroductionMessage(channel))
+	if err != nil {
+		fmt.Println("Couldn't ask for introduction.")
+		fmt.Println("Guild :", g.Name)
+		fmt.Println("Channel :", c.Name)
+	}
 }
 
 func getIntroductionMessage(c *discordgo.Channel) string {
@@ -24,6 +29,10 @@ func getIntroductionMessage(c *discordgo.Channel) string {
 	// Welcome!
 	list := [...]string{
 		"Tu peux te présenter dans <#" + c.ID + ">.",
+		"Si tu as quelques instants, je t'invite à te présenter dans <#" + c.ID + ">!",
+		"J'aimerais en savoir plus sur toi, tu peux m'en dire plus dans <#" + c.ID + ">?",
+		"Je t'invite à faire un tour dans <#" + c.ID + ">!",
+		"Maintenant que tu as obtenu ta garde, rends-toi dans <#" + c.ID + ">!",
 	}
 
 	// Random
