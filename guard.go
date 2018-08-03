@@ -24,8 +24,8 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	var guard string
 	if len(guards) == 1 {
 		guard = guards[0]
-	} else if len(guards) != 0 {
-		// Sorry, I didn't understand.
+	} else if len(guards) > 1 {
+		session.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde!")
 		return false
 	} else {
 		// Why are you ignoring me?
