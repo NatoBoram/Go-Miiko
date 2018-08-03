@@ -76,6 +76,9 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 			fmt.Println(err.Error())
 		}
 
+		// Once a valid guard is received, ask to introduce in the appropriate channel.
+		askForIntroduction(g, c)
+
 	} else if guard == "Eel" {
 
 		// Add role

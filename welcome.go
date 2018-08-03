@@ -11,21 +11,11 @@ import (
 // Ask for the guard.
 func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) {
 
-	// Get welcome channel
-	var cid string
-	err := db.QueryRow("select `channel` from `welcome` where `server` = ?", g.ID).Scan(&cid)
-	if err != nil {
-		fmt.Println("Couldn't select the welcome channel of", g.Name+".")
-		return
-	}
-
 	// Make sure the channel exists
-	channel, err := s.Channel(cid)
+	channel, err := getWelcomeChannel(g)
 	if err != nil {
 		fmt.Println("Couldn't get the channel structure of a welcome channel.")
 		fmt.Println("Guild : " + g.Name)
-		fmt.Println("ChannelID : " + cid)
-		fmt.Println("Member : " + m.User.Username)
 		fmt.Println(err.Error())
 		return
 	}

@@ -4,19 +4,22 @@ use `Miiko`;
 
 -- Drop Table
 drop table if exists `pins`;
-drop table if exists `welcome`;
+drop table if exists `channel-welcome`;
 drop table if exists `role-absynthe`;
 drop table if exists `role-shadow`;
 drop table if exists `role-obsidian`;
 drop table if exists `role-moderator`;
 drop table if exists `role-administrator`;
 
+-- Legacy tables
+drop table if exists `welcome`;
+
 -- Create Table
 
 -- Channels
 
 -- Welcome Channel
-create table if not exists `welcome` (
+create table if not exists `channel-welcome` (
 	`server` varchar(32) primary key,
 	`channel` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4;
@@ -114,11 +117,11 @@ group by `server`
 -- Test Values
 
 -- Servers
-INSERT INTO `welcome`(`server`, `channel`) VALUES("1", "1");
-INSERT INTO `welcome`(`server`, `channel`) VALUES("2", "2");
-INSERT INTO `welcome`(`server`, `channel`) VALUES("3", "3");
-INSERT INTO `welcome`(`server`, `channel`) VALUES("4", "4");
-INSERT INTO `welcome`(`server`, `channel`) VALUES("5", "5");
+INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("1", "1");
+INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("2", "2");
+INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("3", "3");
+INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("4", "4");
+INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("5", "5");
 
 -- Pins
 INSERT into `pins` VALUES ("1", "1", "1");
