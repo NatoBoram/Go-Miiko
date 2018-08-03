@@ -25,15 +25,13 @@ func selectWelcomeChannel(g *discordgo.Guild) (id string, err error) {
 // Insert Welcome Channel
 
 func insertWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	res, err = tx.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
-	return res, err
+	return tx.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
 // Update Welcome Channel
 
 func updateWelcomeChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
-	res, err = tx.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
-	return res, err
+	return tx.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
 
 // Pins
@@ -161,4 +159,25 @@ func updateRoleEel(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.R
 
 func updateRoleNPC(tx *sql.Tx, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
 	return updateRole(tx, g, r, tableNPC)
+}
+
+// Presentation Channel
+
+// Select Presentation Channel
+
+func selectPresentationChannel(g *discordgo.Guild) (id string, err error) {
+	err = db.QueryRow("select `channel` from `"+tablePresentation+"` where server = ?;", g.ID).Scan(&id)
+	return id, err
+}
+
+// Insert Presentation Channel
+
+func insertPresentationChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return tx.Exec("insert into `"+tablePresentation+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
+}
+
+// Update Presentation Channel
+
+func updatePresentationChannel(tx *sql.Tx, g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return tx.Exec("update `"+tablePresentation+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
