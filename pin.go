@@ -1,11 +1,12 @@
-package bot
+package main
 
 import (
 	"fmt"
 	"math"
 
-	"github.com/NatoBoram/Go-Miiko/wheel"
 	"github.com/bwmarrin/discordgo"
+
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
@@ -60,7 +61,7 @@ func pindb(g *discordgo.Guild, m *discordgo.Message) {
 
 	// Check if there's one
 	var exists int
-	err := DB.QueryRow("select count(`message`) from `pins` where `message` = ?;", m.ID).Scan(&exists)
+	err := db.QueryRow("select count(`message`) from `pins` where `message` = ?;", m.ID).Scan(&exists)
 	if err != nil {
 		fmt.Println("Could not confirm the existence of a pin.")
 		fmt.Println("Guild :", g.Name)
@@ -70,7 +71,7 @@ func pindb(g *discordgo.Guild, m *discordgo.Message) {
 	} else if exists == 1 {
 
 		// Prepare
-		stmt, err := DB.Prepare("update `pins` set `server` = ?, `message` = ?, `member` = ? where `message` = ?;")
+		stmt, err := db.Prepare("update `pins` set `server` = ?, `message` = ?, `member` = ? where `message` = ?;")
 		if err != nil {
 			fmt.Println("Couldn't prepare to update a pin.")
 			fmt.Println(err.Error())
@@ -89,7 +90,7 @@ func pindb(g *discordgo.Guild, m *discordgo.Message) {
 	} else if exists == 0 {
 
 		// Prepare
-		stmt, err := DB.Prepare("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)")
+		stmt, err := db.Prepare("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)")
 		if err != nil {
 			fmt.Println("Couldn't prepare a pin.")
 			fmt.Println(err.Error())

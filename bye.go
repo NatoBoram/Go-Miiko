@@ -1,4 +1,4 @@
-package bot
+package main
 
 import (
 	"fmt"
@@ -10,26 +10,17 @@ import (
 
 func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) {
 
-	// Get welcome channel
-	var cid string
-	err := DB.QueryRow("select `channel` from `welcome` where `server` = ?", g.ID).Scan(&cid)
-	if err != nil {
-		fmt.Println("Couldn't select the welcome channel of", g.Name, ".")
-		return
-	}
-
 	// Make sure the channel exists
-	channel, err := s.Channel(cid)
+	channel, err := getWelcomeChannel(g)
 	if err != nil {
-		fmt.Println("Couldn't get the channel structure of a welcome channel.")
+		fmt.Println("Couldn't get a welcome channel.")
 		fmt.Println("Guild : " + g.Name)
-		fmt.Println("ChannelID : " + cid)
 		fmt.Println(err.Error())
 		return
 	}
 
 	// Bot?
-	if m.User.ID == Me.ID {
+	if m.User.ID == me.ID {
 		fmt.Println("Looks like I just left", g.Name+".")
 	} else if m.User.Bot {
 

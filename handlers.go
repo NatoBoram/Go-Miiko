@@ -1,67 +1,25 @@
-package bot
+package main
 
 import (
-	"database/sql"
 	"fmt"
 	"strings"
 
-	"github.com/NatoBoram/Go-Miiko/commands"
 	"github.com/bwmarrin/discordgo"
 )
 
-var (
-	// DB : Connection to the database.
-	DB *sql.DB
+func addHandlers() {
 
-	// Me : The bot itself.
-	Me *discordgo.User
-
-	// Master : UserID of the bot's master.
-	Master *discordgo.User
-)
-
-// Start : Starts the bot.
-func Start(db *sql.DB, session *discordgo.Session, master string) error {
-
-	// Database
-	DB = db
-
-	// Myself
-	user, err := session.User("@me")
-	if err != nil {
-		fmt.Println("Couldn't get myself.")
-		return err
-	}
-	Me = user
-
-	// Master
-	user, err = session.User(master)
-	if err != nil {
-		fmt.Println("Couldn't recognize my master.")
-		return err
-	}
-	Master = user
-
-	// Hey, listen!
 	session.AddHandler(messageHandler)
 	session.AddHandler(reactHandler)
 	session.AddHandler(leaveHandler)
 	session.AddHandler(joinHandler)
 
-	// Refresh
-	go refresh(db, session)
-
-	// It's alive!
-	fmt.Println("Hi, master " + Master.Username + ". I am " + Me.Username + ", and everything's all right!")
-
-	// Everything is fine!
-	return nil
 }
 
 func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Myself? Super User?
-	if m.Author.ID == Me.ID || m.Author.Discriminator == "0000" {
+	if m.Author.ID == me.ID || m.Author.Discriminator == "0000" {
 		return
 	}
 
@@ -109,24 +67,24 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Update welcome channel
 	if m.Type == discordgo.MessageTypeGuildMemberJoin {
-		commands.SetWelcomeChannel(DB, s, guild, channel)
+		setWelcomeChannel(guild, channel)
 		return
 	}
 
 	// Guard
-	done = commands.PlaceInAGuard(s, guild, channel, member, m.Message)
+	done = PlaceInAGuard(s, guild, channel, member, m.Message)
 	if done {
 		return
 	}
 
 	// Nani?!
-	done = commands.Nani(s, m.Message)
+	done = Nani(s, m.Message)
 	if done {
 		return
 	}
 
 	// Popcorn!
-	done = commands.Popcorn(s, channel, m.Message)
+	done = Popcorn(s, channel, m.Message)
 	if done {
 		return
 	}
@@ -135,7 +93,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if len(m.Mentions) == 1 {
 
 		// Mentionned me?
-		if m.Mentions[0].ID == Me.ID {
+		if m.Mentions[0].ID == me.ID {
 
 			// Split
 			command := strings.Split(m.Content, " ")
@@ -144,13 +102,13 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if len(command) > 1 {
 				switch command[1] {
 				case "prune":
-					commands.Prune(s, guild, channel, m.Message)
+					Prune(s, guild, channel, m.Message)
 					return
 				case "get":
-					commands.Get(Master, DB, s, guild, channel, m.Message, command)
+					Get(master, db, s, guild, channel, m.Message, command)
 					return
 				case "set":
-					commands.Set(DB, s, guild, channel, m.Message, command)
+					Set(db, s, guild, channel, m.Message, command)
 					return
 				}
 			}
