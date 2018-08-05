@@ -25,7 +25,7 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	if len(guards) == 1 {
 		guard = guards[0]
 	} else if len(guards) > 1 {
-		session.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde!")
+		session.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
 		return false
 	} else {
 		// Why are you ignoring me?
@@ -137,10 +137,10 @@ func getMentionnedGuard(m *discordgo.Message) []string {
 	if strings.Contains(strings.ToLower(m.Content), "ombr") {
 		gardes = append(gardes, "Ombre")
 	}
-	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") || strings.Contains(strings.ToLower(m.Content), "commencé") {
+	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") || strings.Contains(strings.ToLower(m.Content), "de commencer") {
 		gardes = append(gardes, "Eel")
 	}
-	if strings.Contains(strings.ToLower(m.Content), "joue pas") || strings.Contains(strings.ToLower(m.Content), " quoi") {
+	if strings.Contains(strings.ToLower(m.Content), "joue pas") || strings.Contains(strings.ToLower(m.Content), " quoi") || strings.Contains(strings.ToLower(m.Content), "pas commencé") {
 		gardes = append(gardes, "PNJ")
 	}
 	return gardes
