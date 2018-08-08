@@ -248,7 +248,7 @@ func getLoverMessage(name string) string {
 		"Non! Vous ne saurez jamais que j'aime " + name + "!",
 
 		// Tsundere
-		"C'est pas comme si jamais " + name + " ou quoi que ce soit...",
+		"C'est pas comme si j'aimais " + name + " ou quoi que ce soit...",
 		"" + name + ", mais... Ne te fais pas de fausses idées!",
 
 		// Exclamations
