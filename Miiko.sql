@@ -102,18 +102,6 @@ group by `server`, `member`
 order by `server`, `count` desc
 ;
 
--- Love
-create view `love` as
-select `server`, `member`, `count`
-from `pins-count` as `p1`
-where `p1`.`count` = (
-	select max(`count`) as `max`
-	from `pins-count` as `p2`
-	where `p1`.`server` = `p2`.`server`
-)
-group by `server`
-;
-
 -- Test Values
 
 -- Servers
