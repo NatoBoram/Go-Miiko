@@ -34,7 +34,7 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 			break
 		case "lover":
 			// Get Lover
-			GetLoverCmd(db, s, g, c, m.Author)
+			// GetLoverCmd(db, s, g, c, m.Author)
 			break
 		}
 	}
