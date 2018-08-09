@@ -193,8 +193,7 @@ func GetLover(db *sql.DB, s *discordgo.Session, g *discordgo.Guild) (*discordgo.
 		// Member
 		member, err := s.GuildMember(g.ID, userID)
 		if err != nil {
-			fmt.Println("Couldn't get a potential lover's member.")
-			fmt.Println("Guild :", g.Name)
+			// The member probably isn't in this guild anymore.
 			continue
 		}
 
