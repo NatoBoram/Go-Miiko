@@ -134,7 +134,7 @@ func getPublicByeMessage(user *discordgo.User) string {
 
 		// Community
 		"Aurevoir, **" + user.Username + "**. Reviens-nous vite!",
-		"**" + user.Username + "** nous a quitté. Souhaiton-lui le meilleur!",
+		"**" + user.Username + "** nous a quitté. Souhaitons-lui le meilleur!",
 		"**" + user.Username + "** nous a quitté. Elle va nous manquer.",
 		"Adieu, **" + user.Username + "**! Vole vers d'autres cieux!",
 		"**" + user.Username + "** a été transféré vers un autre QG.",
