@@ -134,15 +134,15 @@ func getPublicByeMessage(user *discordgo.User) string {
 
 		// Community
 		"Aurevoir, **" + user.Username + "**. Reviens-nous vite!",
-		"**" + user.Username + "** nous a quitté. Souhaitons-lui le meilleur!",
-		"**" + user.Username + "** nous a quitté. Elle va nous manquer.",
+		"**" + user.Username + "** nous a quittés. Souhaitons-lui le meilleur!",
+		"**" + user.Username + "** nous a quittés. Elle va nous manquer.",
 		"Adieu, **" + user.Username + "**! Vole vers d'autres cieux!",
 		"**" + user.Username + "** a été transféré vers un autre QG.",
 		"Nous n'oublierons pas le sacrifice de **" + user.Username + "**!",
 		"Nous avons perdu **" + user.Username + "**, mais nous restons forts.",
 
 		// Legendary
-		"C'est en ce jour funeste que **" + user.Username + "** nous a quitté. Puisse son âme rejoindre le cristal et son héritage mon porte-maanas.",
+		"C'est en ce jour funeste que **" + user.Username + "** nous a quittés. Puisse son âme rejoindre le cristal et son héritage mon porte-maanas.",
 	}
 
 	// Random
