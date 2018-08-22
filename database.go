@@ -19,7 +19,7 @@ func toConnectionString(database Database) string {
 
 func selectWelcomeChannel(g *discordgo.Guild) (id string, err error) {
 	err = db.QueryRow("select `channel` from `"+tableWelcome+"` where server = ?;", g.ID).Scan(&id)
-	return id, err
+	return
 }
 
 // Insert Welcome Channel
@@ -37,12 +37,23 @@ func updateWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Res
 // Pins
 
 // Select Pin
+func selectPin(m *discordgo.Message) (id string, err error) {
+	err = db.QueryRow("select `server`, `member`, `message` from `pins` where `message` = ?;", m.ID).Scan(&id)
+	return
+}
 
 // Insert Pin
+func insertPin(g *discordgo.Guild, u *discordgo.User, m *discordgo.Message) (res sql.Result, err error) {
+	return db.Exec("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)", g.ID, u.ID, m.ID)
+}
 
 // Update Pin
+// Not needed.
 
 // Delete Pin
+func deletePin(m *discordgo.Message) (res sql.Result, err error) {
+	return db.Exec("delete from `pins` where message = ?;", m.ID)
+}
 
 // Roles
 
@@ -164,20 +175,17 @@ func updateRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err e
 // Presentation Channel
 
 // Select Presentation Channel
-
 func selectPresentationChannel(g *discordgo.Guild) (id string, err error) {
 	err = db.QueryRow("select `channel` from `"+tablePresentation+"` where server = ?;", g.ID).Scan(&id)
 	return id, err
 }
 
 // Insert Presentation Channel
-
 func insertPresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("insert into `"+tablePresentation+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
 // Update Presentation Channel
-
 func updatePresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("update `"+tablePresentation+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
