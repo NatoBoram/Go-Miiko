@@ -4,7 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func getWelcomeChannel(g *discordgo.Guild) (*discordgo.Channel, error) {
+func getWelcomeChannel(s *discordgo.Session, g *discordgo.Guild) (*discordgo.Channel, error) {
 
 	// Select the presentation channel
 	channelID, err := selectWelcomeChannel(g)
@@ -13,10 +13,10 @@ func getWelcomeChannel(g *discordgo.Guild) (*discordgo.Channel, error) {
 	}
 
 	// Turn it into a channel
-	return session.Channel(channelID)
+	return s.Channel(channelID)
 }
 
-func getPresentationChannel(g *discordgo.Guild) (channel *discordgo.Channel, err error) {
+func getPresentationChannel(s *discordgo.Session, g *discordgo.Guild) (channel *discordgo.Channel, err error) {
 
 	// Select the presentation channel
 	channelID, err := selectPresentationChannel(g)
@@ -25,5 +25,5 @@ func getPresentationChannel(g *discordgo.Guild) (channel *discordgo.Channel, err
 	}
 
 	// Turn it into a channel
-	return session.Channel(channelID)
+	return s.Channel(channelID)
 }

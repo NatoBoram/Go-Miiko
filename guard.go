@@ -25,7 +25,7 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	if len(guards) == 1 {
 		guard = guards[0]
 	} else if len(guards) > 1 {
-		session.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
+		s.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
 		return false
 	} else {
 		// Why are you ignoring me?
@@ -77,7 +77,7 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		}
 
 		// Once a valid guard is received, ask to introduce in the appropriate channel.
-		askForIntroduction(g, c)
+		askForIntroduction(s, g, c)
 
 	} else if guard == "Eel" {
 

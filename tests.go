@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+
+	"github.com/bwmarrin/discordgo"
 )
 
-func testInsertWelcomeChannel() {
+func testInsertWelcomeChannel(s *discordgo.Session) {
 
 	// Get guild
-	guild, err := session.Guild("365011717375262720")
+	guild, err := s.Guild("365011717375262720")
 	if err != nil {
 		fmt.Println("Couldn't get a guild.")
 		fmt.Println(err.Error())
@@ -17,7 +19,7 @@ func testInsertWelcomeChannel() {
 	}
 
 	// Get channel
-	channel, err := session.Channel("365011718025248769")
+	channel, err := s.Channel("365011718025248769")
 	if err != nil {
 		fmt.Println("Couldn't get a channel.")
 		fmt.Println(err.Error())
@@ -53,10 +55,10 @@ func testInsertWelcomeChannel() {
 	os.Exit(0)
 }
 
-func testSelectNothing() {
+func testSelectNothing(s *discordgo.Session) {
 
 	// Get guild
-	guild, err := session.Guild("365011717375262720")
+	guild, err := s.Guild("365011717375262720")
 	if err != nil {
 		fmt.Println("Couldn't get a guild.")
 		fmt.Println(err.Error())

@@ -7,12 +7,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func addHandlers() {
+func addHandlers(s *discordgo.Session) {
 
-	session.AddHandler(messageHandler)
-	session.AddHandler(reactHandler)
-	session.AddHandler(leaveHandler)
-	session.AddHandler(joinHandler)
+	s.AddHandler(messageHandler)
+	s.AddHandler(reactHandler)
+	s.AddHandler(leaveHandler)
+	s.AddHandler(joinHandler)
 
 }
 

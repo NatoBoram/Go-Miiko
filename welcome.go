@@ -12,7 +12,7 @@ import (
 func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) {
 
 	// Make sure the channel exists
-	channel, err := getWelcomeChannel(g)
+	channel, err := getWelcomeChannel(s, g)
 	if err != nil {
 		fmt.Println("Couldn't get the channel structure of a welcome channel.")
 		fmt.Println("Guild : " + g.Name)

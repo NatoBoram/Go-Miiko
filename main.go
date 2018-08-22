@@ -27,7 +27,7 @@ func main() {
 	defer db.Close()
 
 	// Discord
-	err = initDiscord()
+	session, err := initDiscord()
 	if err != nil {
 		return
 	}
@@ -78,59 +78,59 @@ func initDatabase() error {
 	return nil
 }
 
-func initDiscord() error {
+func initDiscord() (s *discordgo.Session, err error) {
 
 	// Read the Discord config
 	var discord Discord
-	err := readDiscord(&discord)
+	err = readDiscord(&discord)
 	if err != nil {
 		fmt.Println("Could not load the Discord configuration.")
 		fmt.Println(err.Error())
 		writeTemplateDiscord()
-		return err
+		return nil, err
 	}
 
 	// Check for empty JSON
 	if discord.isEmpty() {
 		err = errors.New("Configuration is missing inside " + discordPath)
 		fmt.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	// Create a Discord session
-	session, err = discordgo.New("Bot " + discord.Token)
+	s, err = discordgo.New("Bot " + discord.Token)
 	if err != nil {
 		fmt.Println("Could not create a Discord session.")
 		fmt.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	// Connect to Discord
-	err = session.Open()
+	err = s.Open()
 	if err != nil {
 		fmt.Println("Could not connect to Discord.")
 		fmt.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	// Myself
-	me, err = session.User("@me")
+	me, err = s.User("@me")
 	if err != nil {
 		fmt.Println("Couldn't get myself.")
 		fmt.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	// Master
-	master, err = session.User(discord.MasterID)
+	master, err = s.User(discord.MasterID)
 	if err != nil {
 		fmt.Println("Couldn't recognize my master.")
 		fmt.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	// Handlers
-	addHandlers()
+	addHandlers(s)
 
-	return nil
+	return nil, nil
 }

@@ -16,7 +16,7 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 			// Get Welcome Channel
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
-					getWelcomeChannelCommand(g, c)
+					getWelcomeChannelCommand(s, g, c)
 				}
 			}
 			break
@@ -24,7 +24,7 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 			// Get Presentation Channel
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
-					getPresentationChannelCommand(g, c)
+					getPresentationChannelCommand(s, g, c)
 				}
 			}
 			break
@@ -41,17 +41,17 @@ func Get(master *discordgo.User, db *sql.DB, s *discordgo.Session, g *discordgo.
 }
 
 // GetWelcomeChannelCommand send the welcome channel to an user.
-func getWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
+func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
 
 	// Get the welcome channel
-	channel, err := getWelcomeChannel(g)
+	channel, err := getWelcomeChannel(s, g)
 	if err != nil {
-		session.ChannelMessageSend(c.ID, "Il n'y a pas de salon de bienvenue.")
+		s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de bienvenue.")
 		return
 	}
 
 	// Send the welcome channel
-	session.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+channel.ID+">.")
+	s.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+channel.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't send the welcome channel.")
 		fmt.Println("Guild : " + g.Name)
@@ -61,16 +61,16 @@ func getWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 	}
 }
 
-func getPresentationChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
+func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
 
 	// Get the presentation channel
-	channel, err := getPresentationChannel(g)
+	channel, err := getPresentationChannel(s, g)
 	if err != nil {
-		session.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
+		s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
 		return
 	}
 
-	session.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
+	s.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't send the presentation channel.")
 		fmt.Println("Guild : " + g.Name)

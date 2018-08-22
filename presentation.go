@@ -8,15 +8,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func askForIntroduction(g *discordgo.Guild, c *discordgo.Channel) {
+func askForIntroduction(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
 
-	channel, err := getPresentationChannel(g)
+	channel, err := getPresentationChannel(s, g)
 	if err != nil {
 		// There's no presentation channel.
 		return
 	}
 
-	_, err = session.ChannelMessageSend(c.ID, getIntroductionMessage(channel))
+	_, err = s.ChannelMessageSend(c.ID, getIntroductionMessage(channel))
 	if err != nil {
 		fmt.Println("Couldn't ask for introduction.")
 		fmt.Println("Guild :", g.Name)

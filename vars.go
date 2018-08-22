@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	db      *sql.DB
-	session *discordgo.Session
-	me      *discordgo.User
-	master  *discordgo.User
+	db     *sql.DB
+	me     *discordgo.User
+	master *discordgo.User
 )

@@ -17,7 +17,7 @@ func Set(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
 					if m.Author.ID == g.OwnerID {
-						setWelcomeChannelCommand(g, c)
+						setWelcomeChannelCommand(s, g, c)
 					}
 				}
 			}
@@ -27,7 +27,7 @@ func Set(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 			if len(ms) > 3 {
 				if ms[3] == "channel" {
 					if m.Author.ID == g.OwnerID {
-						setPresentationChannelCommand(g, c)
+						setPresentationChannelCommand(s, g, c)
 					}
 				}
 			}
@@ -37,7 +37,7 @@ func Set(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 }
 
 // setWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
-func setWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
+func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
 
 	// Set the welcome channel
 	_, err := setWelcomeChannel(g, c)
@@ -50,8 +50,8 @@ func setWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 	}
 
 	// Send feedback
-	session.ChannelTyping(c.ID)
-	_, err = session.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
+	s.ChannelTyping(c.ID)
+	_, err = s.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't announce the new welcome channel.")
 		fmt.Println("Guild :", g.Name)
@@ -61,7 +61,7 @@ func setWelcomeChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 	}
 }
 
-func setPresentationChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
+func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
 
 	// Set the presentation channel
 	_, err := setPresentationChannel(g, c)
@@ -74,8 +74,8 @@ func setPresentationChannelCommand(g *discordgo.Guild, c *discordgo.Channel) {
 	}
 
 	// Send feedback
-	session.ChannelTyping(c.ID)
-	_, err = session.ChannelMessageSend(c.ID, "Le salon de présentation est maintenant <#"+c.ID+">.")
+	s.ChannelTyping(c.ID)
+	_, err = s.ChannelMessageSend(c.ID, "Le salon de présentation est maintenant <#"+c.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't announce the new presentation channel.")
 		fmt.Println("Guild :", g.Name)
