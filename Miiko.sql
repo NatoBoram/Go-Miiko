@@ -101,29 +101,3 @@ from `pins`
 group by `server`, `member`
 order by `server`, `count` desc
 ;
-
--- Test Values
-
--- Servers
-INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("1", "1");
-INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("2", "2");
-INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("3", "3");
-INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("4", "4");
-INSERT INTO `channel-welcome`(`server`, `channel`) VALUES("5", "5");
-
--- Pins
-INSERT into `pins` VALUES ("1", "1", "1");
-INSERT into `pins` VALUES ("2", "2", "2");
-INSERT into `pins` VALUES ("2", "3", "3");
-INSERT into `pins` VALUES ("3", "4", "1");
-INSERT into `pins` VALUES ("3", "5", "2");
-INSERT into `pins` VALUES ("3", "6", "3");
-INSERT into `pins` VALUES ("4", "7", "1");
-INSERT into `pins` VALUES ("4", "8", "2");
-INSERT into `pins` VALUES ("4", "9", "3");
-INSERT into `pins` VALUES ("4", "10", "1");
-INSERT into `pins` VALUES ("5", "11", "2");
-INSERT into `pins` VALUES ("5", "12", "3");
-INSERT into `pins` VALUES ("5", "13", "1");
-INSERT into `pins` VALUES ("5", "14", "2");
-INSERT into `pins` VALUES ("5", "15", "3");
