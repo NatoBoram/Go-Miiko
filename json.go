@@ -43,6 +43,9 @@ func readDiscord(object *Discord) error {
 
 func writeDatabase(object Database) error {
 
+	// Create required directories
+	os.MkdirAll(rootFolder, permPrivateDirectory)
+
 	// From object to JSON
 	json, err := json.Marshal(object)
 	if err != nil {
@@ -50,7 +53,7 @@ func writeDatabase(object Database) error {
 	}
 
 	// From JSON to File
-	err = ioutil.WriteFile(databasePath, json, os.ModePerm)
+	err = ioutil.WriteFile(databasePath, json, permPrivateFile)
 	if err != nil {
 		return err
 	}
@@ -60,6 +63,9 @@ func writeDatabase(object Database) error {
 
 func writeDiscord(object Discord) error {
 
+	// Create required directories
+	os.MkdirAll(rootFolder, permPrivateDirectory)
+
 	// From object to JSON
 	json, err := json.Marshal(object)
 	if err != nil {
@@ -67,7 +73,7 @@ func writeDiscord(object Discord) error {
 	}
 
 	// From JSON to File
-	err = ioutil.WriteFile(discordPath, json, os.ModePerm)
+	err = ioutil.WriteFile(discordPath, json, permPrivateFile)
 	if err != nil {
 		return err
 	}
