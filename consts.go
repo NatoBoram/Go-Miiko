@@ -1,5 +1,9 @@
 package main
 
+import (
+	"os"
+)
+
 const (
 	rootFolder   = "./Miiko"
 	discordPath  = rootFolder + "/discord.json"
@@ -23,4 +27,9 @@ const (
 
 	tableWelcome      = "channel-welcome"
 	tablePresentation = "channel-presentation"
+)
+
+const (
+	permPrivateDirectory os.FileMode = 0700
+	permPrivateFile      os.FileMode = 0600
 )
