@@ -1,4 +1,4 @@
-image: golang:1.10.1
+image: golang:1.11
 
 before_script:
   - go get -u -v -fix gitlab.com/NatoBoram/Go-Miiko
