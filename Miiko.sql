@@ -91,13 +91,13 @@ create table if not exists `role-npc` (
 
 -- Views
 
-drop view `love`;
-drop view `pins-count`;
+-- drop view `love`;
+-- drop view `pins-count`;
 
 -- Pins Count
-create view `pins-count` as
-select `server`, `member`, count(`message`) as `count`
-from `pins`
-group by `server`, `member`
-order by `server`, `count` desc
-;
+-- create view `pins-count` as
+-- select `server`, `member`, count(`message`) as `count`
+-- from `pins`
+-- group by `server`, `member`
+-- order by `server`, `count` desc
+-- ;
