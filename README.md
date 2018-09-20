@@ -215,6 +215,8 @@ Go-Miiko needs a database, so let's create a user in the server.
 
 Please generate a random password and note it somewhere. Since you won't log-in as Miiko, it's a good practice to use a complex randomly generated password instead of entering a weaker one.
 
+Go-Miiko doesn't set-up her database by herself at the moment. You need to run `Miiko.sql` manually.
+
 Now that its user is done, we need to enter its configuration where the bot should run. Ideally, it'll be in `~/Miiko/`.
 
 First, install the bot and run it once where you want its files located.
