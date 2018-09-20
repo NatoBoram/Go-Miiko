@@ -10,6 +10,8 @@ You can invite her by clicking [here](https://discordapp.com/api/oauth2/authoriz
 
 I'm working on bringing her to a state where she can create and manage a Discord Server.
 
+![Miiko](assets/Miiko.png)
+
 ## Features
 
 * Welcome newcomers
