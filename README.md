@@ -141,7 +141,7 @@ apt show php-fpm
 Depends: php7.2-fpm
 ```
 
-Replace `php7.0-fpm.sock` with your `php-fpm`. It my case, it's `php7.2-fpm.sock`.
+Replace `php7.0-fpm.sock` with your `php-fpm`. In my case, it's `php7.2-fpm.sock`.
 
 This part is uncommented generally when you have Apache installed next to Nginx. It is a good practice to *always* uncomment it, just in case.
 
