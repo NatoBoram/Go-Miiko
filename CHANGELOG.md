@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [2.0.0] - 2018-09-01
 
-This marks the end of the [GitLab](https://gitlab.com/NatoBoram/Go-Miiko) migration from [GitHub](https://github.com/NatoBoram/Go-Miiko).
+This marks the end of the [GitLab](https://gitlab.com/NatoBoram/Go-Miiko) migration from [GitHub](https://github.com/NatoBoram/Go-Miiko) and the introduction of this changelog.
 
 ### Added
 
