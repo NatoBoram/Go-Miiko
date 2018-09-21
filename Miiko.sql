@@ -4,6 +4,7 @@ use `Miiko`;
 
 -- Drop Table
 drop table if exists `pins`;
+drop table if exists `minimum-reactions`;
 drop table if exists `channel-welcome`;
 drop table if exists `role-absynthe`;
 drop table if exists `role-shadow`;
@@ -37,6 +38,12 @@ create table if not exists `pins` (
 	`server` varchar(32) not null,
 	`message` varchar(32) primary key,
 	`member` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Minimum Reactions
+create table if not exists `minimum-reactions` (
+	`channel` varchar(32) primary key,
+	`minimum` int not null
 ) engine=InnoDB default charset=utf8mb4;
 
 -- Roles

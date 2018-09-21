@@ -186,3 +186,21 @@ func insertPresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sq
 func updatePresentationChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("update `"+tablePresentation+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
+
+// Minimum Pins
+
+// Select Minimum Reactions
+func selectMinimumReactions(c *discordgo.Channel) (minimum int, err error) {
+	err = db.QueryRow("select `minimum` from `"+tableMinimumReactions+"` where channel = ?;", c.ID).Scan(&minimum)
+	return
+}
+
+// Insert Minimum Reactions
+func insertMinimumReactions(c *discordgo.Channel, minimum int) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableMinimumReactions+"`(`channel`, `minimum`) values(?, ?);", c.ID, minimum)
+}
+
+// Update Minimum Reactions
+func updateMinimumReactions(c *discordgo.Channel, minimum int) (res sql.Result, err error) {
+	return db.Exec("update `"+tableMinimumReactions+"` set `minimum` = ? where `minimum` = ?;", c.ID, minimum)
+}

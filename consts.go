@@ -25,8 +25,9 @@ const (
 	tableEel      = "role-eel"
 	tableNPC      = "role-npc"
 
-	tableWelcome      = "channel-welcome"
-	tablePresentation = "channel-presentation"
+	tableWelcome          = "channel-welcome"
+	tablePresentation     = "channel-presentation"
+	tableMinimumReactions = "minimum-reactions"
 )
 
 const (
