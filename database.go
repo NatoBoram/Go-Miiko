@@ -16,20 +16,17 @@ func toConnectionString(database Database) string {
 // Welcome Channel
 
 // Select Welcome Channel
-
 func selectWelcomeChannel(g *discordgo.Guild) (id string, err error) {
 	err = db.QueryRow("select `channel` from `"+tableWelcome+"` where server = ?;", g.ID).Scan(&id)
 	return
 }
 
 // Insert Welcome Channel
-
 func insertWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("insert into `"+tableWelcome+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
 // Update Welcome Channel
-
 func updateWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("update `"+tableWelcome+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }
