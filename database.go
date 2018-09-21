@@ -58,7 +58,7 @@ func deletePin(m *discordgo.Message) (res sql.Result, err error) {
 
 func selectRole(g *discordgo.Guild, table string) (id string, err error) {
 	err = db.QueryRow("select `role` from `"+table+"` where server = ?;", g.ID).Scan(&id)
-	return id, err
+	return
 }
 
 func selectRoleAdmin(g *discordgo.Guild) (id string, err error) {
@@ -174,7 +174,7 @@ func updateRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err e
 // Select Presentation Channel
 func selectPresentationChannel(g *discordgo.Guild) (id string, err error) {
 	err = db.QueryRow("select `channel` from `"+tablePresentation+"` where server = ?;", g.ID).Scan(&id)
-	return id, err
+	return
 }
 
 // Insert Presentation Channel
