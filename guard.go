@@ -12,8 +12,17 @@ import (
 // PlaceInAGuard gives members a role.
 func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, u *discordgo.Member, m *discordgo.Message) bool {
 
-	// If Author has no role
-	if len(u.Roles) != 0 || m.Author.Bot {
+	// No guard for bots!
+	if m.Author.Bot {
+		return false
+	}
+
+	// Check if author has no role
+	has, err := hasGuard(s, g, u)
+	if err != nil {
+		printDiscordError("Couldn't check if a member has a guard.", g, c, m, nil, err)
+		return false
+	} else if has {
 		return false
 	}
 
