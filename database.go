@@ -96,7 +96,7 @@ func selectRoleNPC(g *discordgo.Guild) (id string, err error) {
 // Insert Role
 
 func insertRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return db.Exec("insert into "+table+"(server, role) values(?, ?);", g.ID, r.ID)
+	return db.Exec("insert into `"+table+"`(server, role) values(?, ?);", g.ID, r.ID)
 }
 
 func insertRoleAdmin(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
@@ -134,7 +134,7 @@ func insertRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err e
 // Update Role
 
 func updateRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
-	return db.Exec("update `"+table+"` set role = ? where server = ;", table, r.ID, g.ID)
+	return db.Exec("update `"+table+"` set role = ? where server = ?;", r.ID, g.ID)
 }
 
 func updateRoleAdmin(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {

@@ -23,7 +23,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// Functions 2.0
+	// Flow Control
 	done := false
 
 	// Get channel structure
@@ -72,7 +72,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Guard
-	done = PlaceInAGuard(s, guild, channel, member, m.Message)
+	done = placeInAGuard(s, guild, channel, member, m.Message)
 	if done {
 		return
 	}
@@ -102,13 +102,13 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if len(command) > 1 {
 				switch command[1] {
 				case "prune":
-					Prune(s, guild, channel, m.Message)
+					prune(s, guild, channel, m.Message)
 					return
 				case "get":
-					Get(master, db, s, guild, channel, m.Message, command)
+					get(s, guild, channel, m.Message, command)
 					return
 				case "set":
-					Set(db, s, guild, channel, m.Message, command)
+					set(s, guild, channel, m.Message, command)
 					return
 				}
 			}

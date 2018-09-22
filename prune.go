@@ -12,7 +12,7 @@ import (
 var pruning = make(map[string]bool)
 
 // Prune a server from inactive people with a role
-func Prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 
 	if m.Author.ID != g.OwnerID {
 		return

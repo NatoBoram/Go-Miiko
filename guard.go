@@ -10,7 +10,7 @@ import (
 )
 
 // PlaceInAGuard gives members a role.
-func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, u *discordgo.Member, m *discordgo.Message) bool {
+func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, u *discordgo.Member, m *discordgo.Message) bool {
 
 	// If Author has no role
 	if len(u.Roles) != 0 || m.Author.Bot {
@@ -18,12 +18,14 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	}
 
 	// Get mentionned roles
-	guards := getMentionnedGuard(m)
+	guards, tables, err := getMentionnedGuard(s, g, m)
 
 	// Check if there's only one mentionned role
-	var guard string
+	var guard *discordgo.Role
+	var table string
 	if len(guards) == 1 {
 		guard = guards[0]
+		table = tables[0]
 	} else if len(guards) > 1 {
 		s.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
 		return false
@@ -33,43 +35,35 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	}
 
 	// Typing!
-	err := s.ChannelTyping(m.ChannelID)
+	err = s.ChannelTyping(m.ChannelID)
 	if err != nil {
 		fmt.Println("Couldn't tell that I'm typing.")
 		fmt.Println("Channel : " + c.Name)
 		fmt.Println(err.Error())
 	}
 
-	// Get role by name
-	role := getRoleByName(s, g, guard)
-	if role == nil {
-		fmt.Println("Strangely, I could not identify this role.")
-		fmt.Println("Guard :", guard)
-		return false
-	}
-
-	if guard == "Étincelante" {
-		_, err := s.ChannelMessageSend(m.ChannelID, "Si tu fais partie de la Garde <@&"+role.ID+">, envoie un message à <@"+g.OwnerID+"> sur Eldarya pour annoncer ta présence. En attendant, dans quelle garde est ton personnage sur Eldarya?")
+	if table == tableLight {
+		_, err := s.ChannelMessageSend(m.ChannelID, "Si tu fais partie de la Garde <@&"+guard.ID+">, envoie un message à <@"+g.OwnerID+"> sur Eldarya pour annoncer ta présence. En attendant, dans quelle garde est ton personnage sur Eldarya?")
 		if err != nil {
 			fmt.Println("Couldn't send message for special role.")
 			fmt.Println("Channel : " + c.Name)
 			fmt.Println(err.Error())
 		}
-	} else if guard == "Obsidienne" || guard == "Absynthe" || guard == "Ombre" {
+	} else if table == tableAbsynthe || table == tableObsidian || table == tableShadow {
 
 		// Add role
-		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, role.ID)
+		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			fmt.Println("Couldn't add a role.")
 			fmt.Println("Guild : " + g.Name)
-			fmt.Println("Role : " + role.ID)
+			fmt.Println("Role : " + guard.ID)
 			fmt.Println("Member : " + u.User.Username)
 			fmt.Println(err.Error())
 			return false
 		}
 
 		// Announce
-		_, err = s.ChannelMessageSend(m.ChannelID, getGuardMessage(u.User, role))
+		_, err = s.ChannelMessageSend(m.ChannelID, getGuardMessage(u.User, guard))
 		if err != nil {
 			fmt.Println("Couldn't announce new role.")
 			fmt.Println("Channel : " + c.Name)
@@ -79,10 +73,10 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		// Once a valid guard is received, ask to introduce in the appropriate channel.
 		askForIntroduction(s, g, c)
 
-	} else if guard == "Eel" {
+	} else if table == tableEel {
 
 		// Add role
-		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, role.ID)
+		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			fmt.Println("Couldn't add a role.")
 			fmt.Println("Guild : " + g.Name)
@@ -92,17 +86,17 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		}
 
 		// Announce
-		_, err = s.ChannelMessageSend(m.ChannelID, "D'accord, <@"+u.User.ID+">. Je t'ai donné le rôle <@&"+role.ID+"> en attendant que tu rejoignes une garde.")
+		_, err = s.ChannelMessageSend(m.ChannelID, "D'accord, <@"+u.User.ID+">. Je t'ai donné le rôle <@&"+guard.ID+"> en attendant que tu rejoignes une garde.")
 		if err != nil {
 			fmt.Println("Couldn't announce new role.")
 			fmt.Println("Channel : " + c.Name)
 			fmt.Println(err.Error())
 		}
 
-	} else if guard == "PNJ" {
+	} else if table == tableNPC {
 
 		// Add role
-		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, role.ID)
+		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			fmt.Println("Couldn't add a role.")
 			fmt.Println("Guild : " + g.Name)
@@ -112,7 +106,7 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		}
 
 		// Announce
-		_, err = s.ChannelMessageSend(m.ChannelID, "D'accord, <@"+u.User.ID+">. Je t'ai donné le rôle <@&"+role.ID+">, mais saches que ce serveur est dédié à Eldarya.")
+		_, err = s.ChannelMessageSend(m.ChannelID, "D'accord, <@"+u.User.ID+">. Je t'ai donné le rôle <@&"+guard.ID+">, mais saches que ce serveur est dédié à Eldarya.")
 		if err != nil {
 			fmt.Println("Couldn't announce new role.")
 			fmt.Println("Channel : " + c.Name)
@@ -123,46 +117,65 @@ func PlaceInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	return true
 }
 
-func getMentionnedGuard(m *discordgo.Message) []string {
-	var gardes []string
+func getMentionnedGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (guards []*discordgo.Role, tables []string, err error) {
 	if strings.Contains(strings.ToLower(m.Content), "tincelant") {
-		gardes = append(gardes, "Étincelante")
-	}
-	if strings.Contains(strings.ToLower(m.Content), "obsi") {
-		gardes = append(gardes, "Obsidienne")
-	}
-	if strings.Contains(strings.ToLower(m.Content), "absy") {
-		gardes = append(gardes, "Absynthe")
-	}
-	if strings.Contains(strings.ToLower(m.Content), "ombr") {
-		gardes = append(gardes, "Ombre")
-	}
-	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") || strings.Contains(strings.ToLower(m.Content), "de commencer") {
-		gardes = append(gardes, "Eel")
-	}
-	if strings.Contains(strings.ToLower(m.Content), "joue pas") || strings.Contains(strings.ToLower(m.Content), " quoi") || strings.Contains(strings.ToLower(m.Content), "pas commencé") {
-		gardes = append(gardes, "PNJ")
-	}
-	return gardes
-}
-
-func getRoleByName(s *discordgo.Session, g *discordgo.Guild, name string) *discordgo.Role {
-
-	// Get roles
-	guildRoles, err := s.GuildRoles(g.ID)
-	if err != nil {
-		fmt.Println("Couldn't get the guild's roles.")
-		fmt.Println("Guild :", g.Name)
-		fmt.Println("Role :", name)
-		fmt.Println(err.Error())
-	}
-
-	// Get the first occurrence
-	for x := 0; x < len(guildRoles); x++ {
-		if guildRoles[x].Name == name {
-			return guildRoles[x]
+		role, err := getRoleLight(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableLight)
 		}
 	}
+	if strings.Contains(strings.ToLower(m.Content), "obsi") {
+		role, err := getRoleObsidian(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableObsidian)
+		}
+	}
+	if strings.Contains(strings.ToLower(m.Content), "absy") {
+		role, err := getRoleAbsynthe(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableAbsynthe)
+		}
+	}
+	if strings.Contains(strings.ToLower(m.Content), "ombr") {
+		role, err := getRoleShadow(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableShadow)
+		}
+	}
+	if strings.Contains(strings.ToLower(m.Content), "eel") || strings.Contains(strings.ToLower(m.Content), "aucun") || strings.Contains(strings.ToLower(m.Content), "ai pas") || strings.Contains(strings.ToLower(m.Content), "pas encore") || strings.Contains(strings.ToLower(m.Content), "de commencer") {
+		role, err := getRoleEel(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableEel)
+		}
+	}
+	if strings.Contains(strings.ToLower(m.Content), "joue pas") || strings.Contains(strings.ToLower(m.Content), " quoi") || strings.Contains(strings.ToLower(m.Content), "pas commencé") {
+		role, err := getRoleNPC(s, g)
+		if err != nil {
+			fmt.Println("Couldn't get the Light guard.")
+		} else {
+			guards = append(guards, role)
+			tables = append(tables, tableNPC)
+		}
+	}
+	return
+}
+
+func createGuard(s *discordgo.Session, g *discordgo.Guild, name string) *discordgo.Role {
 
 	// Get color
 	var color int
@@ -232,9 +245,8 @@ func getGuardMessage(user *discordgo.User, role *discordgo.Role) string {
 	}
 
 	// Seed
-	source := rand.NewSource(time.Now().UnixNano())
-	seed := rand.New(source)
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// Return
-	return messageList[seed.Intn(len(messageList))]
+	return messageList[random.Intn(len(messageList))]
 }
