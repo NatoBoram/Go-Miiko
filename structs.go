@@ -1,5 +1,9 @@
 package main
 
+import (
+	"github.com/bwmarrin/discordgo"
+)
+
 // Database hosts the bot's database configuration.
 type Database struct {
 	User     string
@@ -19,4 +23,13 @@ type Discord struct {
 type Languages struct {
 	French  string
 	English string
+}
+
+type discordgoStackTrace struct {
+	info    string
+	guild   *discordgo.Guild
+	channel *discordgo.Channel
+	message *discordgo.Message
+	user    *discordgo.User
+	err     error
 }

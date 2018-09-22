@@ -13,9 +13,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 	// Make sure the channel exists
 	channel, err := getWelcomeChannel(s, g)
 	if err != nil {
-		fmt.Println("Couldn't get a welcome channel.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get a welcome channel.", g, nil, nil, m.User, err)
 		return
 	}
 
@@ -28,8 +26,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		s.ChannelTyping(channel.ID)
 		_, err = s.ChannelMessageSend(channel.ID, getByeBotMessage(m.User))
 		if err != nil {
-			fmt.Println("Couldn't say bye to " + m.User.Username + "!")
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't say bye to "+m.User.Username+"!", g, nil, nil, m.User, err)
 		}
 
 	} else {
@@ -38,8 +35,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		err = s.ChannelTyping(channel.ID)
 		_, err = s.ChannelMessageSend(channel.ID, getPublicByeMessage(m.User))
 		if err != nil {
-			fmt.Println("Couldn't announce the departure of " + m.User.Username + ".")
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't announce the departure of "+m.User.Username+".", g, nil, nil, m.User, err)
 		}
 
 		// Create an invite structure
@@ -50,16 +46,14 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		var invite *discordgo.Invite
 		invite, err = s.ChannelInviteCreate(channel.ID, invStruct)
 		if err != nil {
-			fmt.Println("Couldn't create an invite in " + g.Name + ".")
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't create an invite in "+g.Name+".", g, channel, nil, m.User, err)
 			return
 		}
 
 		// Open channel
 		privateChannel, err := s.UserChannelCreate(m.User.ID)
 		if err != nil {
-			fmt.Println("Couldn't create a private channel with " + m.User.Username + ".")
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't create a private channel with "+m.User.Username+".", g, channel, nil, m.User, err)
 			return
 		}
 
@@ -67,8 +61,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		s.ChannelTyping(privateChannel.ID)
 		_, err = s.ChannelMessageSend(privateChannel.ID, getPrivateByeMessage(invite.Code))
 		if err != nil {
-			fmt.Println("Couldn't send a message to " + m.User.Username + "!")
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't send a message to "+m.User.Username+"!", g, channel, nil, m.User, err)
 		}
 	}
 }

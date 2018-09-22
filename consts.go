@@ -8,6 +8,7 @@ const (
 	rootFolder   = "./Miiko"
 	discordPath  = rootFolder + "/discord.json"
 	databasePath = rootFolder + "/db.json"
+	errorPath    = rootFolder + "/errors.log"
 )
 
 const (

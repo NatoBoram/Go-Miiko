@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -10,22 +9,67 @@ import (
 func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, ms []string) {
 	if len(ms) > 2 {
 		switch ms[2] {
+
+		// get welcome
 		case "welcome":
 			if len(ms) > 3 {
-				if ms[3] == "channel" {
+				switch ms[3] {
+
+				// get welcome channel
+				case "channel":
 					getWelcomeChannelCommand(s, g, c)
+
+				// get welcome ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// get welcome
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
 				}
 			}
+
+		// get presentation
 		case "presentation":
 			if len(ms) > 3 {
-				if ms[3] == "channel" {
+				switch ms[3] {
+
+				// get presentation channel
+				case "channel":
 					getPresentationChannelCommand(s, g, c)
+
+				// get presentation ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a get presentation command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// get presentation
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a get presentation command.", g, c, m, nil, err)
 				}
 			}
+		// get points
 		case "points":
 			// GetPoints(s, g, c, m)
+
+		// get roles
 		case "roles":
 			getRolesCommand(s, g, c)
+
+		// get role
 		case "role":
 			if len(ms) > 3 {
 				switch ms[3] {
@@ -45,10 +89,39 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 					getRoleEelCommand(s, g, c)
 				case "npc":
 					getRoleNPCCommand(s, g, c)
+
+				// get role ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur le role `"+ms[3]+"`."+"\n"+
+						"Les rôles disponibles sont `admin`, `mod`, `light`, `absynthe`, `obsidian`, `shadow`, `eel` et `npc`.")
+					if err != nil {
+						printDiscordError("Couldn't help a get role command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+				_, err := s.ChannelMessageSend(c.ID, "Les rôles disponibles sont `admin`, `mod`, `light`, `absynthe`, `obsidian`, `shadow`, `eel` et `npc`.")
+				if err != nil {
+					printDiscordError("Couldn't help a get role command.", g, c, m, nil, err)
 				}
 			}
+
+		// get lover
 		case "lover":
 			// GetLoverCmd(db, s, g, c, m.Author)
+
+		// get ?
+		default:
+			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
+				"Les commandes disponibles sont `welcome`, `presentation`, ~~`points`~~, `roles` et ~~`lover`~~.")
+			if err != nil {
+				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
+			}
+		}
+
+	} else {
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `welcome`, `presentation`, ~~`points`~~, `roles`, `role` et ~~`lover`~~.")
+		if err != nil {
+			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
 	}
 }
@@ -66,10 +139,7 @@ func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *disco
 	// Send the welcome channel
 	s.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+channel.ID+">.")
 	if err != nil {
-		fmt.Println("Couldn't send the welcome channel.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println("Channel : " + c.Name)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't send the welcome channel.", g, c, nil, nil, err)
 		return
 	}
 }
@@ -78,17 +148,21 @@ func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *
 
 	// Get the presentation channel
 	channel, err := getPresentationChannel(s, g)
-	if err != nil {
-		s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
+	if err == sql.ErrNoRows {
+		_, err = s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
+		if err != nil {
+			printDiscordError("Couldn't announce the absence of presentation channel.", g, c, nil, nil, err)
+		}
+		return
+	} else if err != nil {
+		printDiscordError("Couldn't get the presentation channel.", g, c, nil, nil, err)
 		return
 	}
 
+	// Send the presentation channel
 	s.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
 	if err != nil {
-		fmt.Println("Couldn't send the presentation channel.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println("Channel : " + c.Name)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't send the presentation channel.", g, c, nil, nil, err)
 		return
 	}
 }
@@ -130,8 +204,7 @@ func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 	s.ChannelTyping(c.ID)
 	_, err := s.ChannelMessageSendEmbed(c.ID, embed)
 	if err != nil {
-		fmt.Println("Couldn't send an embed.")
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't send an embed.", g, c, nil, nil, err)
 	}
 }
 
@@ -142,8 +215,13 @@ func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 		s.ChannelMessageSend(c.ID, "Je ne connais pas ce rôle.")
 		return
 	} else if err != nil {
-		s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu trouver ce rôle.")
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get a role.", g, c, nil, nil, err)
+
+		_, err = s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu trouver ce rôle.")
+		if err != nil {
+			printDiscordError("Couldn't announce that I couldn't get a role.", g, c, nil, nil, err)
+		}
+
 		return
 	}
 
@@ -151,8 +229,7 @@ func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 	s.ChannelTyping(c.ID)
 	_, err = s.ChannelMessageSend(c.ID, "Ce rôle est <@&"+r.ID+">.")
 	if err != nil {
-		fmt.Println("Couldn't tell the role.")
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't tell the role.", g, c, nil, nil, err)
 	}
 }
 

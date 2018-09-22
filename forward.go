@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -16,11 +14,7 @@ func forward(s *discordgo.Session, c *discordgo.Channel, m *discordgo.Message) b
 	// Create channel with Master
 	channel, err := s.UserChannelCreate(master.ID)
 	if err != nil {
-		fmt.Println("Couldn't create a private channel with", master.Username+".")
-		fmt.Println("Channel :", c.Name)
-		fmt.Println("Author :", m.Author.Username)
-		fmt.Println("Message :", m.Content)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't create a private channel with"+master.Username+".", nil, c, m, master, err)
 		return false
 	}
 
@@ -28,10 +22,7 @@ func forward(s *discordgo.Session, c *discordgo.Channel, m *discordgo.Message) b
 	s.ChannelTyping(channel.ID)
 	_, err = s.ChannelMessageSend(channel.ID, "<@"+m.Author.ID+"> : "+m.Content)
 	if err != nil {
-		fmt.Println("Couldn't forward a message to", master.Username+".")
-		fmt.Println("Author :", m.Author.Username)
-		fmt.Println("Message :", m.Content)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't forward a message to"+master.Username+".", nil, channel, m, master, err)
 		return false
 	}
 
