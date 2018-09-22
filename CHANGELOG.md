@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Added
 
 * Changelog
+* Lots of help dialogs
+* Guard detection
+* Authority detection
 
 ### Changed
 
@@ -19,7 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Removed
 
+* `Love` and `Points` are to be re-introduced in a while.
+
 ### Fixed
+
+* Members with more than one role will no longuer surpass her intellectual capabilities
 
 ### Security
 
