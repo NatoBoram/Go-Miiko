@@ -102,13 +102,72 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if len(command) > 1 {
 				switch command[1] {
 				case "prune":
+
+					// Permissions
+					has, err := canAdministrate(s, guild, member)
+					if err != nil {
+						printDiscordError("Couldn't check if a member can administrate.", guild, channel, m.Message, nil, err)
+						return
+					}
+
+					// Check
+					if !has {
+						s.ChannelMessageSend(channel.ID, "Tu n'as pas la permission de faire ça.")
+						return
+					}
+
 					prune(s, guild, channel, m.Message)
 					return
 				case "get":
+
+					// Permissions
+					has, err := isGuardianOrOver(s, guild, member)
+					if err != nil {
+						printDiscordError("Couldn't check if a member has a guard.", guild, channel, m.Message, nil, err)
+						return
+					}
+
+					// Check
+					if !has {
+						s.ChannelMessageSend(channel.ID, "Tu n'as pas la permission de faire ça.")
+						return
+					}
+
 					get(s, guild, channel, m.Message, command)
 					return
 				case "set":
+
+					// Permissions
+					has, err := canAdministrate(s, guild, member)
+					if err != nil {
+						printDiscordError("Couldn't check if a member can administrate.", guild, channel, m.Message, nil, err)
+						return
+					}
+
+					// Check
+					if !has {
+						s.ChannelMessageSend(channel.ID, "Tu n'as pas la permission de faire ça.")
+						return
+					}
+
 					set(s, guild, channel, m.Message, command)
+					return
+				case "info":
+
+					// Permissions
+					has, err := canModerate(s, guild, member)
+					if err != nil {
+						printDiscordError("Couldn't check if a member can moderate.", guild, channel, m.Message, nil, err)
+						return
+					}
+
+					// Check
+					if !has {
+						s.ChannelMessageSend(channel.ID, "Tu n'as pas la permission de faire ça.")
+						return
+					}
+
+					info(s, guild, channel, m.Message, command)
 					return
 				}
 			}

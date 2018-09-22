@@ -6,14 +6,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func setError(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, info string, err error) {
-	fmt.Println("Guild :", g.Name)
-	fmt.Println("Channel :", c.Name)
-	fmt.Println("Message :", m.Content)
-	fmt.Println("Author :", m.Author.Username)
-	fmt.Println(err.Error())
-}
-
 // Set redirects the `set` command.
 func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, ms []string) {
 	if len(ms) > 2 {
@@ -27,9 +19,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// set presentation channel
 				case "channel":
-					if m.Author.ID == g.OwnerID {
-						setPresentationChannelCommand(s, g, c)
-					}
+					setPresentationChannelCommand(s, g, c)
 
 				// set presentation ?
 				default:
@@ -50,10 +40,6 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 		// set role
 		case "role":
-			if m.Author.ID != g.OwnerID {
-				s.ChannelMessageSend(c.ID, "Désolée, mais vous n'avez pas les permissions nécessaires.")
-				return
-			}
 			if len(ms) > 4 {
 				switch ms[3] {
 				case "admin":
@@ -97,9 +83,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// set welcome channel
 				case "channel":
-					if m.Author.ID == g.OwnerID {
-						setWelcomeChannelCommand(s, g, c)
-					}
+					setWelcomeChannelCommand(s, g, c)
 
 				// set welcome ?
 				default:
