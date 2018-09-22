@@ -19,34 +19,6 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	if len(ms) > 2 {
 		switch ms[2] {
 
-		// set welcome
-		case "welcome":
-			if len(ms) > 3 {
-				switch ms[3] {
-
-				// set welcome channel
-				case "channel":
-					if m.Author.ID == g.OwnerID {
-						setWelcomeChannelCommand(s, g, c)
-					}
-
-				// set welcome ?
-				default:
-					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
-						"La commande disponible est `channel`.")
-					if err != nil {
-						printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
-					}
-				}
-			} else {
-
-				// set welcome
-				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
-				if err != nil {
-					printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
-				}
-			}
-
 		// set presentation
 		case "presentation":
 			if len(ms) > 3 {
@@ -118,10 +90,38 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 				}
 			}
 
+		// set welcome
+		case "welcome":
+			if len(ms) > 3 {
+				switch ms[3] {
+
+				// set welcome channel
+				case "channel":
+					if m.Author.ID == g.OwnerID {
+						setWelcomeChannelCommand(s, g, c)
+					}
+
+				// set welcome ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// set welcome
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
+				}
+			}
+
 		// set ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont `welcome`, `presentation` et `role`.")
+				"Les commandes disponibles sont `presentation`, `role` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
@@ -129,7 +129,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	} else {
 
 		// set
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `welcome`, `presentation` et `role`.")
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `presentation`, `role` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
@@ -192,9 +192,13 @@ func setRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 	// Get a role from the command
 	role, err := getRoleByString(s, g, roleString)
 	if err != nil {
-		fmt.Println("Couldn't get a role by its string.")
-		fmt.Println(err.Error())
-		s.ChannelMessageSend(c.ID, "Ce rôle n'existe pas.")
+		printDiscordError("Couldn't get a role by its string.", g, c, nil, nil, err)
+
+		_, err := s.ChannelMessageSend(c.ID, "Ce rôle n'existe pas.")
+		if err != nil {
+			printDiscordError("Couldn't announce that a role doesn't exist.", g, c, nil, nil, err)
+		}
+
 		return
 	}
 

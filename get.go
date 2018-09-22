@@ -10,31 +10,13 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	if len(ms) > 2 {
 		switch ms[2] {
 
-		// get welcome
-		case "welcome":
-			if len(ms) > 3 {
-				switch ms[3] {
+		// get lover
+		case "lover":
+			// GetLoverCmd(db, s, g, c, m.Author)
 
-				// get welcome channel
-				case "channel":
-					getWelcomeChannelCommand(s, g, c)
-
-				// get welcome ?
-				default:
-					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
-						"La commande disponible est `channel`.")
-					if err != nil {
-						printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
-					}
-				}
-			} else {
-
-				// get welcome
-				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
-				if err != nil {
-					printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
-				}
-			}
+		// get points
+		case "points":
+			// GetPoints(s, g, c, m)
 
 		// get presentation
 		case "presentation":
@@ -61,13 +43,6 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 					printDiscordError("Couldn't help a get presentation command.", g, c, m, nil, err)
 				}
 			}
-		// get points
-		case "points":
-			// GetPoints(s, g, c, m)
-
-		// get roles
-		case "roles":
-			getRolesCommand(s, g, c)
 
 		// get role
 		case "role":
@@ -105,21 +80,49 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 				}
 			}
 
-		// get lover
-		case "lover":
-			// GetLoverCmd(db, s, g, c, m.Author)
+		// get roles
+		case "roles":
+			getRolesCommand(s, g, c)
+
+		// get welcome
+		case "welcome":
+			if len(ms) > 3 {
+				switch ms[3] {
+
+				// get welcome channel
+				case "channel":
+					getWelcomeChannelCommand(s, g, c)
+
+				// get welcome ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// get welcome
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a get welcome command.", g, c, m, nil, err)
+				}
+			}
 
 		// get ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont `welcome`, `presentation`, ~~`points`~~, `roles` et ~~`lover`~~.")
+				"Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
 		}
 
 	} else {
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `welcome`, `presentation`, ~~`points`~~, `roles`, `role` et ~~`lover`~~.")
+
+		// get
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
