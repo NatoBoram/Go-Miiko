@@ -25,7 +25,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// get presentation channel
 				case "channel":
-					getPresentationChannelCommand(s, g, c)
+					getPresentationChannelCommand(s, g, c, m)
 
 				// get presentation ?
 				default:
@@ -49,21 +49,21 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			if len(ms) > 3 {
 				switch ms[3] {
 				case "admin":
-					getRoleAdminCommand(s, g, c)
+					getRoleAdminCommand(s, g, c, m)
 				case "mod":
-					getRoleModCommand(s, g, c)
+					getRoleModCommand(s, g, c, m)
 				case "light":
-					getRoleLightCommand(s, g, c)
+					getRoleLightCommand(s, g, c, m)
 				case "absynthe":
-					getRoleAbsyntheCommand(s, g, c)
+					getRoleAbsyntheCommand(s, g, c, m)
 				case "obsidian":
-					getRoleObsidianCommand(s, g, c)
+					getRoleObsidianCommand(s, g, c, m)
 				case "shadow":
-					getRoleShadowCommand(s, g, c)
+					getRoleShadowCommand(s, g, c, m)
 				case "eel":
-					getRoleEelCommand(s, g, c)
+					getRoleEelCommand(s, g, c, m)
 				case "npc":
-					getRoleNPCCommand(s, g, c)
+					getRoleNPCCommand(s, g, c, m)
 
 				// get role ?
 				default:
@@ -82,7 +82,11 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 		// get roles
 		case "roles":
-			getRolesCommand(s, g, c)
+			getRolesCommand(s, g, c, m)
+
+		// get sars
+		case "sars":
+			getSARsCommand(s, g, c, m)
 
 		// get welcome
 		case "welcome":
@@ -91,7 +95,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// get welcome channel
 				case "channel":
-					getWelcomeChannelCommand(s, g, c)
+					getWelcomeChannelCommand(s, g, c, m)
 
 				// get welcome ?
 				default:
@@ -113,7 +117,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		// get ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
+				"Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
@@ -130,7 +134,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 }
 
 // GetWelcomeChannelCommand send the welcome channel to an user.
-func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 
 	// Get the welcome channel
 	channel, err := getWelcomeChannel(s, g)
@@ -142,30 +146,30 @@ func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *disco
 	// Send the welcome channel
 	s.ChannelMessageSend(c.ID, "Le salon de bienvenue est <#"+channel.ID+">.")
 	if err != nil {
-		printDiscordError("Couldn't send the welcome channel.", g, c, nil, nil, err)
+		printDiscordError("Couldn't send the welcome channel.", g, c, m, nil, err)
 		return
 	}
 }
 
-func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 
 	// Get the presentation channel
 	channel, err := getPresentationChannel(s, g)
 	if err == sql.ErrNoRows {
 		_, err = s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de présentation.")
 		if err != nil {
-			printDiscordError("Couldn't announce the absence of presentation channel.", g, c, nil, nil, err)
+			printDiscordError("Couldn't announce the absence of presentation channel.", g, c, m, nil, err)
 		}
 		return
 	} else if err != nil {
-		printDiscordError("Couldn't get the presentation channel.", g, c, nil, nil, err)
+		printDiscordError("Couldn't get the presentation channel.", g, c, m, nil, err)
 		return
 	}
 
 	// Send the presentation channel
 	s.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
 	if err != nil {
-		printDiscordError("Couldn't send the presentation channel.", g, c, nil, nil, err)
+		printDiscordError("Couldn't send the presentation channel.", g, c, m, nil, err)
 		return
 	}
 }
@@ -182,7 +186,7 @@ func newRoleEmbedField(name string, r *discordgo.Role) *discordgo.MessageEmbedFi
 	}
 }
 
-func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 
 	// Get Roles
 	admin, mod, light, absynthe, obsidian, shadow, eel, npc := getRoles(s, g)
@@ -207,22 +211,22 @@ func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 	s.ChannelTyping(c.ID)
 	_, err := s.ChannelMessageSendEmbed(c.ID, embed)
 	if err != nil {
-		printDiscordError("Couldn't send an embed.", g, c, nil, nil, err)
+		printDiscordError("Couldn't send an embed.", g, c, m, nil, err)
 	}
 }
 
-func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, r *discordgo.Role, err error) {
+func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, r *discordgo.Role, err error) {
 
 	// Check Error
 	if err == sql.ErrNoRows {
 		s.ChannelMessageSend(c.ID, "Je ne connais pas ce rôle.")
 		return
 	} else if err != nil {
-		printDiscordError("Couldn't get a role.", g, c, nil, nil, err)
+		printDiscordError("Couldn't get a role.", g, c, m, nil, err)
 
 		_, err = s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu trouver ce rôle.")
 		if err != nil {
-			printDiscordError("Couldn't announce that I couldn't get a role.", g, c, nil, nil, err)
+			printDiscordError("Couldn't announce that I couldn't get a role.", g, c, m, nil, err)
 		}
 
 		return
@@ -232,46 +236,81 @@ func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 	s.ChannelTyping(c.ID)
 	_, err = s.ChannelMessageSend(c.ID, "Ce rôle est <@&"+r.ID+">.")
 	if err != nil {
-		printDiscordError("Couldn't tell the role.", g, c, nil, nil, err)
+		printDiscordError("Couldn't tell the role.", g, c, m, nil, err)
 	}
 }
 
-func getRoleAdminCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleAdminCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleAdmin(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleModCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleModCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleMod(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleLightCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleLightCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleLight(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleAbsyntheCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleAbsyntheCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleAbsynthe(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleObsidianCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleObsidianCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleObsidian(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleShadowCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleShadowCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleShadow(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleEelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleEelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleEel(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
 }
 
-func getRoleNPCCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func getRoleNPCCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	role, err := getRoleNPC(s, g)
-	getRoleCommand(s, g, c, role, err)
+	getRoleCommand(s, g, c, m, role, err)
+}
+
+// Self-Assignable Roles
+func getSARsCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
+
+	// Get Self-Assignable Roles
+	roles, err := getSARs(s, g)
+	if err != nil {
+		printDiscordError("Couldn't get self-assignable roles.", g, c, m, nil, err)
+		return
+	}
+
+	// Create Embed
+	embed := &discordgo.MessageEmbed{
+		Title:       "Rôles",
+		Color:       0x34386f,
+		Description: "Voici les rôles auto-assignables que je connais dans **" + g.Name + "**.",
+		Fields:      []*discordgo.MessageEmbedField{},
+	}
+
+	// Extract names
+	for _, role := range roles {
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+			Name:   role.Name,
+			Value:  role.ID,
+			Inline: true,
+		})
+	}
+
+	// Send embed
+	_, err = s.ChannelMessageSendEmbed(c.ID, embed)
+	if err != nil {
+		printDiscordError("Couldn't send an embed.", g, c, m, nil, err)
+	}
 }

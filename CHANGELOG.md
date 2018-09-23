@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 * Lots of help dialogs
 * Guard detection
 * Authority detection
+* Self-assignable roles
 
 ### Changed
 
@@ -29,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 * Members with more than one role will no longuer surpass her intellectual capabilities
 
 ### Security
+
+* Ban new members with `discord.gg` in their username.
 
 ## [2.0.0] - 2018-09-01
 

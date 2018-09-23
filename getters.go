@@ -114,3 +114,37 @@ func getRoleByString(s *discordgo.Session, g *discordgo.Guild, str string) (role
 
 	return nil, errors.New("this role doesn't exist")
 }
+
+// Self-Assignable Role
+func getSAR(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (role *discordgo.Role, err error) {
+
+	// Get a role ID from the database
+	roleID, err := selectSAR(g, r)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get Role
+	return s.State.Role(g.ID, roleID)
+}
+
+// Self-Assignable Roles
+func getSARs(s *discordgo.Session, g *discordgo.Guild) (roles []*discordgo.Role, err error) {
+
+	// Get role IDs from the database
+	roleIDs, err := selectSARs(g)
+	if err != nil {
+		return roles, err
+	}
+
+	// Append each and every roles
+	for _, roleID := range roleIDs {
+		role, err := s.State.Role(g.ID, roleID)
+		if err != nil {
+			continue
+		}
+		roles = append(roles, role)
+	}
+
+	return
+}

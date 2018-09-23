@@ -177,6 +177,22 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 					info(s, guild, channel, m.Message, command)
 					return
+				case "sar":
+
+					// Permissions
+					has, err := hasGuard(s, guild, member)
+					if err != nil {
+						printDiscordError("Couldn't check if a member has a guard.", guild, channel, m.Message, nil, err)
+						return
+					}
+
+					// Check
+					if !has {
+						s.ChannelMessageSend(channel.ID, "Tu n'as pas la permission de faire ça.")
+						return
+					}
+
+					sar(s, guild, channel, m.Message, command)
 				}
 			}
 		}

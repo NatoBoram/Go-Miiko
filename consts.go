@@ -25,6 +25,7 @@ const (
 	tableShadow   = "role-shadow"
 	tableEel      = "role-eel"
 	tableNPC      = "role-npc"
+	tableSAR      = "roles-sar"
 
 	tableWelcome          = "channel-welcome"
 	tablePresentation     = "channel-presentation"

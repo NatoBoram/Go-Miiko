@@ -11,6 +11,7 @@ drop table if exists `role-shadow`;
 drop table if exists `role-obsidian`;
 drop table if exists `role-moderator`;
 drop table if exists `role-administrator`;
+drop table if exists `roles-sar`;
 
 -- Legacy tables
 drop table if exists `welcome`;
@@ -94,6 +95,13 @@ create table if not exists `role-eel` (
 create table if not exists `role-npc` (
 	`server` varchar(32) primary key,
 	`role` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
+-- Self-Assignable Roles
+create table if not exists `roles-sar` (
+	`server` varchar(32) not null,
+	`role` varchar(32) not null,
+	constraint `pk_roles_saf` primary key (`server`, `role`)
 ) engine=InnoDB default charset=utf8mb4;
 
 -- Views

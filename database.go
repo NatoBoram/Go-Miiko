@@ -204,3 +204,54 @@ func insertMinimumReactions(c *discordgo.Channel, minimum int) (res sql.Result, 
 func updateMinimumReactions(c *discordgo.Channel, minimum int) (res sql.Result, err error) {
 	return db.Exec("update `"+tableMinimumReactions+"` set `minimum` = ? where `minimum` = ?;", c.ID, minimum)
 }
+
+// Self-Assignable Role
+
+// Select Self-Assignable Role
+func selectSAR(g *discordgo.Guild, r *discordgo.Role) (id string, err error) {
+	err = db.QueryRow("select `role` from `"+tableSAR+"` where `server` = ? and `role` = ?;", g.ID, r.ID).Scan(&id)
+	return
+}
+
+// Select Self-Assignable Roles
+func selectSARs(g *discordgo.Guild) (roles []string, err error) {
+
+	// Query
+	rows, err := db.Query("select `role` from `"+tableSAR+"` where `server` = ?;", g.ID)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	// Select
+	for rows.Next() {
+
+		// Get the role
+		var role string
+		err = rows.Scan(&role)
+		if err != nil {
+			return
+		}
+
+		// Place it in a list
+		roles = append(roles, role)
+	}
+
+	// Check for errors
+	err = rows.Err()
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+// Insert SAF
+func insertSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableSAR+"`(`server`, `role`) values(?, ?);", g.ID, r.ID)
+}
+
+// Delete SAF
+func deleteSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return db.Exec("delete from `"+tableSAR+"` where `server` = ? and `role` = ?;", g.ID, r.ID)
+}

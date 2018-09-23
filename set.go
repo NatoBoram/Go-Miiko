@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -19,7 +20,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// set presentation channel
 				case "channel":
-					setPresentationChannelCommand(s, g, c)
+					setPresentationChannelCommand(s, g, c, m)
 
 				// set presentation ?
 				default:
@@ -43,21 +44,21 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			if len(ms) > 4 {
 				switch ms[3] {
 				case "admin":
-					setRoleAdminCommand(s, g, c, ms[4])
+					setRoleAdminCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "mod":
-					setRoleModCommand(s, g, c, ms[4])
+					setRoleModCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "light":
-					setRoleLightCommand(s, g, c, ms[4])
+					setRoleLightCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "absynthe":
-					setRoleAbsyntheCommand(s, g, c, ms[4])
+					setRoleAbsyntheCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "obsidian":
-					setRoleObsidianCommand(s, g, c, ms[4])
+					setRoleObsidianCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "shadow":
-					setRoleShadowCommand(s, g, c, ms[4])
+					setRoleShadowCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "eel":
-					setRoleEelCommand(s, g, c, ms[4])
+					setRoleEelCommand(s, g, c, m, strings.Join(ms[4:], " "))
 				case "npc":
-					setRoleNPCCommand(s, g, c, ms[4])
+					setRoleNPCCommand(s, g, c, m, strings.Join(ms[4:], " "))
 
 				// set role ?
 				default:
@@ -76,6 +77,51 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 				}
 			}
 
+		// set sar
+		case "sar":
+			if len(ms) > 3 {
+
+				switch ms[3] {
+
+				// set sar add
+				case "add":
+					if len(ms) > 4 {
+						setSARAddCommand(s, g, c, m, strings.Join(ms[4:], " "))
+					} else {
+						_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un rôle.")
+						if err != nil {
+							printDiscordError("Couldn't help a set sar add command.", g, c, m, nil, err)
+						}
+					}
+
+				// set sar remove
+				case "remove":
+					if len(ms) > 4 {
+						setSARRemoveCommand(s, g, c, m, strings.Join(ms[4:], " "))
+					} else {
+						_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un rôle.")
+						if err != nil {
+							printDiscordError("Couldn't help a set sar remove command.", g, c, m, nil, err)
+						}
+					}
+
+				// set sar ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"Les commandes disponibles sont `add` et `remove`.")
+					if err != nil {
+						printDiscordError("Couldn't help a set sar command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// set sar
+				_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `add` et `remove`.")
+				if err != nil {
+					printDiscordError("Couldn't help a set sar command.", g, c, m, nil, err)
+				}
+			}
+
 		// set welcome
 		case "welcome":
 			if len(ms) > 3 {
@@ -83,7 +129,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 				// set welcome channel
 				case "channel":
-					setWelcomeChannelCommand(s, g, c)
+					setWelcomeChannelCommand(s, g, c, m)
 
 				// set welcome ?
 				default:
@@ -113,7 +159,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	} else {
 
 		// set
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `presentation`, `role` et `welcome`.")
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `presentation`, `role`, `sar` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
@@ -121,7 +167,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 }
 
 // setWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
-func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 
 	// Set the welcome channel
 	_, err := setWelcomeChannel(g, c)
@@ -145,7 +191,7 @@ func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *disco
 	}
 }
 
-func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	s.ChannelTyping(c.ID)
 
 	// Set the presentation channel
@@ -170,28 +216,27 @@ func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *
 	}
 }
 
-func setRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string, table string) {
+func setRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string, table string) {
 	s.ChannelTyping(c.ID)
 
 	// Get a role from the command
 	role, err := getRoleByString(s, g, roleString)
 	if err != nil {
-		printDiscordError("Couldn't get a role by its string.", g, c, nil, nil, err)
+		printDiscordError("Couldn't get a role by its string.", g, c, m, nil, err)
 
 		_, err := s.ChannelMessageSend(c.ID, "Ce rôle n'existe pas.")
 		if err != nil {
-			printDiscordError("Couldn't announce that a role doesn't exist.", g, c, nil, nil, err)
+			printDiscordError("Couldn't announce that a role doesn't exist.", g, c, m, nil, err)
 		}
 
 		return
 	}
 
 	// Set the role
-	res, err := setRole(s, g, role, table)
+	_, err = setRole(g, role, table)
 	if err != nil {
-		fmt.Println("Couldn't set a role.")
-		fmt.Println(res)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't set a role.", g, c, m, nil, err)
+
 		s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu sauvegarder ce rôle.")
 		return
 	}
@@ -204,34 +249,108 @@ func setRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 	}
 }
 
-func setRoleAdminCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableAdmin)
+func setRoleAdminCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableAdmin)
 }
 
-func setRoleModCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableMod)
+func setRoleModCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableMod)
 }
 
-func setRoleLightCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableLight)
+func setRoleLightCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableLight)
 }
 
-func setRoleAbsyntheCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableAbsynthe)
+func setRoleAbsyntheCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableAbsynthe)
 }
 
-func setRoleObsidianCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableObsidian)
+func setRoleObsidianCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableObsidian)
 }
 
-func setRoleShadowCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableShadow)
+func setRoleShadowCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableShadow)
 }
 
-func setRoleEelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableEel)
+func setRoleEelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableEel)
 }
 
-func setRoleNPCCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, roleString string) {
-	setRoleCommand(s, g, c, roleString, tableNPC)
+func setRoleNPCCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	setRoleCommand(s, g, c, m, roleString, tableNPC)
+}
+
+// Self-Assignable Roles
+
+func setSARAddCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	s.ChannelTyping(c.ID)
+
+	// Get a role from the command
+	role, err := getRoleByString(s, g, roleString)
+	if err != nil {
+		printDiscordError("Couldn't get a role by its string.", g, c, m, nil, err)
+
+		// Announce error
+		_, err := s.ChannelMessageSend(c.ID, "Ce rôle n'existe pas.")
+		if err != nil {
+			printDiscordError("Couldn't announce that a role doesn't exist.", g, c, m, nil, err)
+		}
+		return
+	}
+
+	// Set the role
+	_, err = setSAR(g, role)
+	if err != nil {
+		printDiscordError("Couldn't set a self-assigned role.", g, c, m, nil, err)
+
+		// Announce error
+		_, err = s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu sauvegarder ce rôle.")
+		if err != nil {
+			printDiscordError("Couldn't announce that I couldn't save a role.", g, c, m, nil, err)
+		}
+		return
+	}
+
+	// Announce the new role
+	_, err = s.ChannelMessageSend(c.ID, "Le rôle <@&"+role.ID+"> est maintenant auto-assignable.")
+	if err != nil {
+		printDiscordError("Couldn't announce the new SAR.", g, c, m, nil, err)
+	}
+}
+
+func setSARRemoveCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	s.ChannelTyping(c.ID)
+
+	// Get a role from the command
+	role, err := getRoleByString(s, g, roleString)
+	if err != nil {
+		printDiscordError("Couldn't get a role by its string.", g, c, m, nil, err)
+
+		// Announce error
+		_, err := s.ChannelMessageSend(c.ID, "Ce rôle n'existe pas.")
+		if err != nil {
+			printDiscordError("Couldn't announce that a role doesn't exist.", g, c, m, nil, err)
+		}
+		return
+	}
+
+	// Set the role
+	_, err = deleteSAR(g, role)
+	if err != nil {
+		printDiscordError("Couldn't delete a self-assigned role.", g, c, m, nil, err)
+
+		// Announce error
+		_, err = s.ChannelMessageSend(c.ID, "Désolée, je n'ai pas pu retirer ce rôle.")
+		if err != nil {
+			printDiscordError("Couldn't announce that I couldn't remove a role.", g, c, m, nil, err)
+		}
+		return
+	}
+
+	// Announce the new role
+	_, err = s.ChannelMessageSend(c.ID, "Le rôle <@&"+role.ID+"> n'est plus auto-assignable.")
+	if err != nil {
+		printDiscordError("Couldn't announce a removed SAR.", g, c, m, nil, err)
+	}
 }

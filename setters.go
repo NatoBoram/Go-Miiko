@@ -38,7 +38,7 @@ func setWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (sql.Result, er
 	return updateWelcomeChannel(g, c)
 }
 
-func setRole(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
+func setRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
 
 	// Check if the role exists
 	_, err = selectRole(g, table)
@@ -54,34 +54,50 @@ func setRole(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role, table 
 	return updateRole(g, r, table)
 }
 
-func setRoleAdmin(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableAdmin)
+func setRoleAdmin(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableAdmin)
 }
 
-func setRoleMod(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableMod)
+func setRoleMod(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableMod)
 }
 
-func setRoleLight(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableLight)
+func setRoleLight(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableLight)
 }
 
-func setRoleAbsynthe(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableAbsynthe)
+func setRoleAbsynthe(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableAbsynthe)
 }
 
-func setRoleObsidian(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableObsidian)
+func setRoleObsidian(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableObsidian)
 }
 
-func setRoleShadow(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableShadow)
+func setRoleShadow(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableShadow)
 }
 
-func setRoleEel(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableEel)
+func setRoleEel(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableEel)
 }
 
-func setRoleNPC(s *discordgo.Session, g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
-	return setRole(s, g, r, tableNPC)
+func setRoleNPC(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+	return setRole(g, r, tableNPC)
+}
+
+// Self-Assignable Role
+func setSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
+
+	// Check if the role exists
+	_, err = selectSAR(g, r)
+	if err == sql.ErrNoRows {
+
+		// Insert if there's none
+		return insertSAR(g, r)
+	} else if err != nil {
+		return nil, err
+	}
+
+	return
 }
