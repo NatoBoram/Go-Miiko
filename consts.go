@@ -4,6 +4,7 @@ import (
 	"os"
 )
 
+// Paths
 const (
 	rootFolder   = "./Miiko"
 	discordPath  = rootFolder + "/discord.json"
@@ -11,11 +12,13 @@ const (
 	errorPath    = rootFolder + "/errors.log"
 )
 
+// Languages
 const (
 	french  = iota
 	english = iota
 )
 
+// Tables
 const (
 	tableAdmin    = "role-administrator"
 	tableMod      = "role-moderator"
@@ -32,6 +35,7 @@ const (
 	tableMinimumReactions = "minimum-reactions"
 )
 
+// Permissions
 const (
 	permPrivateDirectory os.FileMode = 0700
 	permPrivateFile      os.FileMode = 0600
