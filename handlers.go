@@ -57,12 +57,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Get guild member
 	member, err := s.GuildMember(channel.GuildID, m.Author.ID)
 	if err != nil {
-		fmt.Println("Couldn't get a member structure.")
-		fmt.Println("Guild : " + guild.Name)
-		fmt.Println("Channel : " + channel.Name)
-		fmt.Println("Author : " + m.Author.Username)
-		fmt.Println("Message : " + m.Content)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get a member structure.", guild, channel, m.Message, nil, err)
 		return
 	}
 
