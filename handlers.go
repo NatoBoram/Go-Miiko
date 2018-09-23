@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 
@@ -65,9 +66,21 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// Update welcome channel
+	// First time setup for welcome channels
 	if m.Type == discordgo.MessageTypeGuildMemberJoin {
-		setWelcomeChannel(guild, channel)
+
+		// Check if there's already one
+		_, err := selectWelcomeChannel(guild)
+		if err == sql.ErrNoRows {
+
+			// Set the welcome channel
+			_, err := setWelcomeChannel(guild, channel)
+			if err != nil {
+				printDiscordError("Couldn't select the welcome channel.", guild, channel, m.Message, nil, err)
+			}
+		} else if err != nil {
+			printDiscordError("Couldn't select the welcome channel.", guild, channel, m.Message, nil, err)
+		}
 		return
 	}
 
