@@ -234,6 +234,12 @@ func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 
 func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 
+	// Ban those whose username contains "discord.gg".
+	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") {
+		s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
+		return
+	}
+
 	// Get guild
 	guild, err := s.State.Guild(m.GuildID)
 	if err != nil {
