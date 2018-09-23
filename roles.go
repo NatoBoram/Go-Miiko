@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -11,7 +9,6 @@ func isRole(s *discordgo.Session, g *discordgo.Guild, table string, m *discordgo
 	// Get role
 	role, err := getRole(s, g, table)
 	if err != nil {
-		fmt.Println("Couldn't get", table+" .")
 		return false, err
 	}
 
