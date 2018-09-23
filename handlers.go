@@ -220,6 +220,11 @@ func reactHandler(s *discordgo.Session, m *discordgo.MessageReactionAdd) {
 
 func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 
+	// Don't announce it if its username contains "discord.gg".
+	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") {
+		return
+	}
+
 	// Get guild
 	guild, err := s.State.Guild(m.GuildID)
 	if err != nil {
