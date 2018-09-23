@@ -148,3 +148,52 @@ func getSARs(s *discordgo.Session, g *discordgo.Guild) (roles []*discordgo.Role,
 
 	return
 }
+
+func getColour(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) (colour int, err error) {
+
+	admin, err := isAdmin(s, g, m)
+	if admin {
+		return colourAdministrator, err
+	}
+
+	mod, err := isMod(s, g, m)
+	if mod {
+		return colourModerator, err
+	}
+
+	light, err := isLight(s, g, m)
+	if light {
+		return colourLight, err
+	}
+
+	absynthe, err := isAbsynthe(s, g, m)
+	if absynthe {
+		return colourAbsynthe, err
+	}
+
+	obsidian, err := isObsidian(s, g, m)
+	if obsidian {
+		return colourObsidian, err
+	}
+
+	shadow, err := isShadow(s, g, m)
+	if shadow {
+		return colourShadow, err
+	}
+
+	eel, err := isEel(s, g, m)
+	if eel {
+		return colourEel, err
+	}
+
+	npc, err := isNPC(s, g, m)
+	if npc {
+		return colourNPC, err
+	}
+
+	if m.User.Bot {
+		return colourBot, err
+	}
+
+	return colourNPC, err
+}
