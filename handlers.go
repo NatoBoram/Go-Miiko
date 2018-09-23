@@ -236,15 +236,17 @@ func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 
 	// Ban those whose username contains "discord.gg".
 	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") {
-		s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
+		err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
+		if err != nil {
+			printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
+		}
 		return
 	}
 
 	// Get guild
 	guild, err := s.State.Guild(m.GuildID)
 	if err != nil {
-		fmt.Println("Couldn't get the guild", m.User.Username, "just joined.")
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get the guild "+m.User.Username+" just joined.", guild, nil, nil, m.User, err)
 		return
 	}
 
