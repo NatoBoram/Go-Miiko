@@ -158,7 +158,7 @@ func infoMemberCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Ch
 	embed.Fields = addEmbedField(embed.Fields, "Mention", member.User.Mention(), true)
 	embed.Fields = addEmbedField(embed.Fields, "Multiple Factor Authentication", strconv.FormatBool(member.User.MFAEnabled), true)
 	embed.Fields = addEmbedField(embed.Fields, "String", member.User.String(), true)
-	embed.Fields = addEmbedField(embed.Fields, "Token", member.User.Token, true)
+	// embed.Fields = addEmbedField(embed.Fields, "Token", member.User.Token, true)
 	embed.Fields = addEmbedField(embed.Fields, "Verified", strconv.FormatBool(member.User.Verified), true)
 
 	// Send embed
