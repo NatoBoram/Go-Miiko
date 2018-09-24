@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -99,5 +101,16 @@ func setSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
 		return nil, err
 	}
 
+	return
+}
+
+// Add +1 to the minimum reactions of a channel.
+func addMinimumReactions(c *discordgo.Channel) (err error) {
+	min, err := selectMinimumReactions(c)
+	if err == sql.ErrNoRows {
+		insertMinimumReactions(c, pinAbsoluteMinimum+1)
+	} else if err == nil {
+		updateMinimumReactions(c, wheel.MaxInt(pinAbsoluteMinimum, min+1))
+	}
 	return
 }
