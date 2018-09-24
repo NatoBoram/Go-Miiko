@@ -43,23 +43,23 @@ func main() {
 	<-make(chan struct{})
 }
 
-func initDatabase() error {
+func initDatabase() (err error) {
 
 	// Read the database config
 	var database Database
-	err := readDatabase(&database)
+	err = readDatabase(&database)
 	if err != nil {
 		fmt.Println("Could not load the database configuration.")
 		fmt.Println(err.Error())
 		writeTemplateDatabase()
-		return err
+		return
 	}
 
 	// Check for empty JSON
 	if database.isEmpty() {
 		err = errors.New("Configuration is missing inside " + databasePath)
 		fmt.Println(err.Error())
-		return err
+		return
 	}
 
 	// Connect to MariaDB
@@ -67,7 +67,7 @@ func initDatabase() error {
 	if err != nil {
 		fmt.Println("Could not connect to the database.")
 		fmt.Println(err.Error())
-		return err
+		return
 	}
 
 	// Test the connection to MariaDB
@@ -75,7 +75,7 @@ func initDatabase() error {
 	if err != nil {
 		fmt.Println("Could not ping the database.")
 		fmt.Println(err.Error())
-		return err
+		return
 	}
 
 	return nil
@@ -90,14 +90,14 @@ func initDiscord() (s *discordgo.Session, err error) {
 		fmt.Println("Could not load the Discord configuration.")
 		fmt.Println(err.Error())
 		writeTemplateDiscord()
-		return nil, err
+		return
 	}
 
 	// Check for empty JSON
 	if discord.isEmpty() {
 		err = errors.New("Configuration is missing inside " + discordPath)
 		fmt.Println(err.Error())
-		return nil, err
+		return
 	}
 
 	// Create a Discord session
@@ -105,7 +105,7 @@ func initDiscord() (s *discordgo.Session, err error) {
 	if err != nil {
 		fmt.Println("Could not create a Discord session.")
 		fmt.Println(err.Error())
-		return nil, err
+		return
 	}
 
 	// Connect to Discord
@@ -113,7 +113,7 @@ func initDiscord() (s *discordgo.Session, err error) {
 	if err != nil {
 		fmt.Println("Could not connect to Discord.")
 		fmt.Println(err.Error())
-		return nil, err
+		return
 	}
 
 	// Myself
@@ -121,7 +121,7 @@ func initDiscord() (s *discordgo.Session, err error) {
 	if err != nil {
 		fmt.Println("Couldn't get myself.")
 		fmt.Println(err.Error())
-		return nil, err
+		return
 	}
 
 	// Master
@@ -129,11 +129,11 @@ func initDiscord() (s *discordgo.Session, err error) {
 	if err != nil {
 		fmt.Println("Couldn't recognize my master.")
 		fmt.Println(err.Error())
-		return nil, err
+		return
 	}
 
 	// Handlers
 	addHandlers(s)
 
-	return nil, nil
+	return
 }
