@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -16,94 +15,87 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		return
 	}
 
-	// Get people online
-	var onlineCount int
-	for x := 0; x < len(g.Presences); x++ {
-		if g.Presences[x].Status == discordgo.StatusOnline {
-			onlineCount++
-		}
-	}
-
 	// Get the reactions
 	var singleReactionCount int
-	for x := 0; x < len(m.Reactions); x++ {
-		singleReactionCount = wheel.MaxInt(singleReactionCount, m.Reactions[x].Count)
+	for _, reaction := range m.Reactions {
+		singleReactionCount = wheel.MaxInt(singleReactionCount, reaction.Count)
 	}
 
-	// Pins needs at least 3 reactions!
-	var absoluteMinimum float64 = 3
-
-	// Get minimum for pin
-	minOnline := int(math.Max(absoluteMinimum, math.Ceil(math.Sqrt(float64(onlineCount)))))
+	// Minimum reactions
+	minReactions, err := getMinimumReactions(g, c)
+	if err != nil {
+		printDiscordError("Couldn't get the minimum reactions for a channel.", g, c, m, nil, err)
+	}
 
 	// Check the reactions
-	if singleReactionCount >= minOnline {
+	if singleReactionCount >= minReactions {
+		s.ChannelTyping(c.ID)
 
 		// Pin it!
 		err := s.ChannelMessagePin(c.ID, m.ID)
 		if err != nil {
-			fmt.Println("Couldn't pin a popular message!")
-			fmt.Println("Guild : " + g.Name)
-			fmt.Println("Channel : " + c.Name)
-			fmt.Println("Author : " + m.Author.Username)
-			fmt.Println("Message : " + m.Content)
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't pin a popular message!", g, c, m, nil, err)
+
+			// Check the amount of pins in that channel
+			messages, err := s.ChannelMessagesPinned(c.ID)
+			if err != nil {
+				printDiscordError("Couldn't obtain the amount of pins in a channel.", g, c, m, nil, err)
+				return
+			}
+
+			// Upgrade the minimum
+			if len(messages) >= 50 {
+				err = addMinimumReactions(c)
+				if err != nil {
+					printDiscordError("Couldn't add to the minimum reactions of a channel", g, c, m, nil, err)
+					return
+				}
+
+				purgePin(s, g, c, m, messages)
+			}
+
 			return
 		}
 
 		// Add it to database!
-		pindb(g, m)
+		res, err := insertPin(g, m)
+		if err != nil {
+			printDiscordError("Couldn't insert a pin", g, nil, m, nil, err)
+			fmt.Println("res :", res)
+		}
 	}
 }
 
-// Add a single pin to the database.
-func pindb(g *discordgo.Guild, m *discordgo.Message) {
+func purgePin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, messages []*discordgo.Message) {
 
-	// Check if there's one
-	var exists int
-	err := db.QueryRow("select count(`message`) from `pins` where `message` = ?;", m.ID).Scan(&exists)
+	// Check minimum
+	channelMin, err := selectMinimumReactions(c)
 	if err != nil {
-		fmt.Println("Could not confirm the existence of a pin.")
-		fmt.Println("Guild :", g.Name)
-		fmt.Println("Author :", m.Author.Username)
-		fmt.Println("Message :", m.Content)
+		printDiscordError("Couldn't add to the minimum reactions of a channel", g, c, m, nil, err)
+	}
 
-	} else if exists == 1 {
+	// For each messages
+	for _, message := range messages {
 
-		// Prepare
-		stmt, err := db.Prepare("update `pins` set `server` = ?, `message` = ?, `member` = ? where `message` = ?;")
-		if err != nil {
-			fmt.Println("Couldn't prepare to update a pin.")
-			fmt.Println(err.Error())
-			return
-		}
-		defer stmt.Close()
-
-		// Execute
-		_, err = stmt.Exec(g.ID, m.ID, m.Author.ID, m.ID)
-		if err != nil {
-			fmt.Println("Couldn't update a pin.")
-			fmt.Println(err.Error())
-			return
+		// Check pins
+		var singleReactionCount int
+		for _, reaction := range message.Reactions {
+			singleReactionCount = wheel.MaxInt(singleReactionCount, reaction.Count)
 		}
 
-	} else if exists == 0 {
-
-		// Prepare
-		stmt, err := db.Prepare("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)")
-		if err != nil {
-			fmt.Println("Couldn't prepare a pin.")
-			fmt.Println(err.Error())
-			return
+		// Unpin
+		if channelMin > singleReactionCount {
+			err := s.ChannelMessageUnpin(c.ID, message.ID)
+			if err != nil {
+				printDiscordError("Couldn't unpin a previously popular message", g, c, message, nil, err)
+				continue
+			}
 		}
-		defer stmt.Close()
 
-		// Execute
-		_, err = stmt.Exec(g.ID, m.Author.ID, m.ID)
+		// Delete pin
+		_, err := deletePin(message)
 		if err != nil {
-			fmt.Println("Couldn't insert a pin.")
-			fmt.Println(err.Error())
-			return
+			printDiscordError("Couldn't remove a pin from the database.", g, c, message, nil, err)
 		}
 	}
 }
