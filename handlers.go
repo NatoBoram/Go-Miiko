@@ -73,6 +73,9 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if err != nil {
 				printDiscordError("Couldn't select the welcome channel.", guild, channel, m.Message, nil, err)
 			}
+
+			// Ask for guard, because the joinHandler probably couldn't handle it
+			askForGuard(s, guild, m.Message.Author)
 		} else if err != nil {
 			printDiscordError("Couldn't select the welcome channel.", guild, channel, m.Message, nil, err)
 		}
@@ -280,5 +283,5 @@ func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 	}
 
 	// Ask for guard
-	askForGuard(s, guild, m.Member)
+	askForGuard(s, guild, m.Member.User)
 }

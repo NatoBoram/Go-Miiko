@@ -9,7 +9,7 @@ import (
 )
 
 // Ask for the guard.
-func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) {
+func askForGuard(s *discordgo.Session, g *discordgo.Guild, u *discordgo.User) {
 
 	// Make sure the channel exists
 	channel, err := getWelcomeChannel(s, g)
@@ -26,31 +26,31 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) 
 		fmt.Println("Couldn't tell everyone I'm typing some welcome message.")
 		fmt.Println("Guild : " + g.Name)
 		fmt.Println("Channel : " + channel.Name)
-		fmt.Println("Member : " + m.User.Username)
+		fmt.Println("Member : " + u.Username)
 		fmt.Println(err.Error())
 	}
 
-	if !m.User.Bot {
+	if !u.Bot {
 
 		// Ask newcomer what's their guard
-		_, err = s.ChannelMessageSend(channel.ID, getWelcomeMessage(m.User.ID))
+		_, err = s.ChannelMessageSend(channel.ID, getWelcomeMessage(u.ID))
 		if err != nil {
 			fmt.Println("Couldn't welcome a user.")
 			fmt.Println("Guild : " + g.Name)
 			fmt.Println("Channel : " + channel.Name)
-			fmt.Println("Member : " + m.User.Username)
+			fmt.Println("Member : " + u.Username)
 			fmt.Println(err.Error())
 		}
 
-	} else if m.User.ID != me.ID {
+	} else if u.ID != me.ID {
 
 		// Fear the bot!
-		_, err = s.ChannelMessageSend(channel.ID, getWelcomeBotMessage(m.User.ID))
+		_, err = s.ChannelMessageSend(channel.ID, getWelcomeBotMessage(u.ID))
 		if err != nil {
 			fmt.Println("Couldn't welcome a bot.")
 			fmt.Println("Guild : " + g.Name)
 			fmt.Println("Channel : " + channel.Name)
-			fmt.Println("Member : " + m.User.Username)
+			fmt.Println("Member : " + u.Username)
 			fmt.Println(err.Error())
 		}
 	}
