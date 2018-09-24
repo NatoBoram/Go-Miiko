@@ -53,3 +53,8 @@ const (
 	colourNPC           = 0x9c9c9c
 	colourBot           = 0x7289da
 )
+
+// Pins
+const (
+	pinAbsoluteMinimum = 3
+)
