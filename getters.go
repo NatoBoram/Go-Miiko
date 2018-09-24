@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -149,6 +150,7 @@ func getSARs(s *discordgo.Session, g *discordgo.Guild) (roles []*discordgo.Role,
 	return
 }
 
+// Colours
 func getColour(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) (colour int, err error) {
 
 	admin, err := isAdmin(s, g, m)
@@ -196,4 +198,37 @@ func getColour(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) (c
 	}
 
 	return colourNPC, err
+}
+
+// Reactions
+func getMinimumReactions(g *discordgo.Guild, c *discordgo.Channel) (int, error) {
+
+	// Guild
+	var onlineCount float64
+	for _, presence := range g.Presences {
+		if presence.Status == discordgo.StatusOnline {
+			onlineCount++
+		}
+	}
+	guildMin := int(math.Ceil(math.Sqrt(onlineCount)))
+
+	// Channel
+	channelMin, err := selectMinimumReactions(c)
+
+	// Absolute
+	minimums := []int{
+		guildMin,
+		channelMin,
+		pinAbsoluteMinimum,
+	}
+
+	// Get the maximum minimum
+	var max int
+	for _, min := range minimums {
+		if min > max {
+			max = min
+		}
+	}
+
+	return max, err
 }
