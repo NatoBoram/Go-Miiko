@@ -13,10 +13,7 @@ var pruning = make(map[string]bool)
 
 // Prune a server from inactive people with a role
 func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
-
-	if m.Author.ID != g.OwnerID {
-		return
-	}
+	s.ChannelTyping(c.ID)
 
 	// Check if already pruning
 	alreadyPruning, exists := pruning[g.ID]
@@ -24,30 +21,18 @@ func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *di
 		if alreadyPruning {
 
 			// Stop!
-			s.ChannelTyping(c.ID)
 			_, err := s.ChannelMessageSend(c.ID, "Désolée <@"+m.Author.ID+">! Je purge déjà la guilde "+g.Name+".")
 			if err != nil {
-				fmt.Println("Couldn't send a message.")
-				fmt.Println("Guild : " + g.Name)
-				fmt.Println("Channel : " + c.Name)
-				fmt.Println("Author : " + m.Author.Username)
-				fmt.Println("Message : " + m.Content)
-				fmt.Println(err.Error())
+				printDiscordError("Couldn't tell that I'm already pruning.", g, c, m, nil, err)
 			}
 			return
 		}
 	}
 
 	// Announce
-	s.ChannelTyping(c.ID)
 	_, err := s.ChannelMessageSend(c.ID, "<@"+m.Author.ID+"> Début de la purification de "+g.Name+"! Ça peut prendre quelques minutes.")
 	if err != nil {
-		fmt.Println("Couldn't send a message.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println("Channel : " + c.Name)
-		fmt.Println("Author : " + m.Author.Username)
-		fmt.Println("Message : " + m.Content)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't announce that the pruning is beginning.", g, c, m, nil, err)
 		return
 	}
 
@@ -60,6 +45,7 @@ func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *di
 
 	// For all members
 	for _, gMember := range g.Members {
+		s.ChannelTyping(c.ID)
 
 		// Save their roles
 		MembersMap[gMember.User.ID] = gMember.Roles
@@ -80,6 +66,7 @@ func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *di
 
 	// For all members
 	for _, gMember := range g.Members {
+		s.ChannelTyping(c.ID)
 
 		// Give back their roles
 		err = s.GuildMemberEdit(g.ID, gMember.User.ID, MembersMap[gMember.User.ID])

@@ -135,6 +135,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 // GetWelcomeChannelCommand send the welcome channel to an user.
 func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
 
 	// Get the welcome channel
 	channel, err := getWelcomeChannel(s, g)
@@ -152,6 +153,7 @@ func getWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *disco
 }
 
 func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
 
 	// Get the presentation channel
 	channel, err := getPresentationChannel(s, g)
@@ -187,6 +189,7 @@ func newRoleEmbedField(name string, r *discordgo.Role) *discordgo.MessageEmbedFi
 }
 
 func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
 
 	// Get Roles
 	admin, mod, light, absynthe, obsidian, shadow, eel, npc := getRoles(s, g)
@@ -208,7 +211,6 @@ func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 		},
 	}
 
-	s.ChannelTyping(c.ID)
 	_, err := s.ChannelMessageSendEmbed(c.ID, embed)
 	if err != nil {
 		printDiscordError("Couldn't send an embed.", g, c, m, nil, err)
@@ -216,6 +218,7 @@ func getRolesCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chan
 }
 
 func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, r *discordgo.Role, err error) {
+	s.ChannelTyping(c.ID)
 
 	// Check Error
 	if err == sql.ErrNoRows {
@@ -233,7 +236,6 @@ func getRoleCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Chann
 	}
 
 	// Send the role
-	s.ChannelTyping(c.ID)
 	_, err = s.ChannelMessageSend(c.ID, "Ce rôle est <@&"+r.ID+">.")
 	if err != nil {
 		printDiscordError("Couldn't tell the role.", g, c, m, nil, err)

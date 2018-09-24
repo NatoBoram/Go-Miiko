@@ -20,6 +20,7 @@ func sar(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 }
 
 func sarCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, roleString string) {
+	s.ChannelTyping(c.ID)
 
 	// Recognize the role
 	role, err := getRoleByString(s, g, roleString)

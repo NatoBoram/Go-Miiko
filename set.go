@@ -168,6 +168,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 // setWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
 func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
 
 	// Set the welcome channel
 	_, err := setWelcomeChannel(g, c)
@@ -180,7 +181,6 @@ func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *disco
 	}
 
 	// Send feedback
-	s.ChannelTyping(c.ID)
 	_, err = s.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't announce the new welcome channel.")
@@ -205,7 +205,6 @@ func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *
 	}
 
 	// Send feedback
-	s.ChannelTyping(c.ID)
 	_, err = s.ChannelMessageSend(c.ID, "Le salon de présentation est maintenant <#"+c.ID+">.")
 	if err != nil {
 		fmt.Println("Couldn't announce the new presentation channel.")
