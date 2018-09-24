@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/bwmarrin/discordgo"
 
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
@@ -58,10 +56,9 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		}
 
 		// Add it to database!
-		res, err := insertPin(g, m)
+		_, err = insertPin(g, m)
 		if err != nil {
 			printDiscordError("Couldn't insert a pin", g, nil, m, nil, err)
-			fmt.Println("res :", res)
 		}
 	}
 }
