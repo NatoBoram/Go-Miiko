@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -13,42 +11,24 @@ import (
 func love(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) bool {
 
 	// Lover
-	lover, err := GetLover(db, s, g)
+	lover, err := getLover(s, g)
 	if err != nil {
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get my lover.", g, c, m, nil, err)
 		return false
 	}
 
 	// Verify if it's the one true love
-	if m.Author.ID == lover.ID {
+	if m.Author.ID == lover.User.ID {
 
 		// Rate Limit
 		if wheel.RandomOverPhiPower(100) {
-
-			// Member
-			member, err := s.GuildMember(g.ID, lover.ID)
-			if err != nil {
-				fmt.Println("Couldn't get the member I love.")
-				fmt.Println("Guild :", g.Name)
-				fmt.Println("Channel :", c.Name)
-				fmt.Println("User :", m.Author.Username)
-				fmt.Println("Message :", m.Content)
-				fmt.Println(err.Error())
-				return false
-			}
-
-			mention := "**" + member.Nick + "**"
+			s.ChannelTyping(c.ID)
 
 			// Give some love!
-			s.ChannelTyping(c.ID)
-			_, err = s.ChannelMessageSend(c.ID, getLoveMessage(mention))
+			_, err = s.ChannelMessageSend(c.ID, getLoveMessage(lover))
 			if err != nil {
-				fmt.Println("Couldn't express my love.")
-				fmt.Println("Guild :", g.Name)
-				fmt.Println("Channel :", c.Name)
-				fmt.Println("User :", m.Author.Username)
-				fmt.Println("Message :", m.Content)
-				fmt.Println(err.Error())
+				printDiscordError("Couldn't express my love.", g, c, m, nil, err)
+				return false
 			}
 
 			return true
@@ -57,212 +37,127 @@ func love(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *dis
 	return false
 }
 
-func getLoveMessage(name string) string {
+func getLoveMessage(m *discordgo.Member) string {
 
 	// Messages
 	loveList := [...]string{
 
 		// Greetings
-		"Coucou " + name + " :3",
-		"Coucou " + name + "! \\*-*",
-		"Salut les gens... Oh! " + name + "! :heart:",
-		"Bonjour... Oh! " + name + "! :heart:",
-		"Coucou tout le monde... Oh! " + name + "! :heart:",
+		"Coucou **" + m.Nick + "** :3",
+		"Coucou **" + m.Nick + "**! \\*-*",
+		"Salut les gens... Oh! **" + m.Nick + "**! :heart:",
+		"Bonjour... Oh! **" + m.Nick + "**! :heart:",
+		"Coucou tout le monde... Oh! **" + m.Nick + "**! :heart:",
 		"Coucou mon amour!",
 
 		// Orders
-		"Tiens-moi la main, " + name + "",
-		"" + name + "! Regarde-moiii \\*-*",
+		"Tiens-moi la main, **" + m.Nick + "**",
+		"**" + m.Nick + "**! Regarde-moiii \\*-*",
 		"Caresse-moi les oreilles, s'il te plait!",
 
 		// Questions
-		"" + name + "... Tu veux qu'on fasse quelque chose ensemble?",
-		"Oh, " + name + ", est-ce que je te manque?",
-		"Est-ce que tu penses à moi, " + name + "?",
-		"" + name + ", me demanderas-tu ma main un jour..?",
-		"" + name + ", j'ai fait du popcorn, tu veux en manger avec moi? :3",
-		"" + name + "! Je suis là! Je t'ai manqué, n'est-ce pas? :smile:",
-		"" + name + "! Es-tu content du matelas que j'ai fait mettre dans ta chambre? J'ai dormi dessus :blush:",
+		"**" + m.Nick + "**... Tu veux qu'on fasse quelque chose ensemble?",
+		"Oh, **" + m.Nick + "**, est-ce que je te manque?",
+		"Est-ce que tu penses à moi, **" + m.Nick + "**?",
+		"**" + m.Nick + "**, me demanderas-tu ma main un jour..?",
+		"**" + m.Nick + "**, j'ai fait du popcorn, tu veux en manger avec moi? :3",
+		"**" + m.Nick + "**! Je suis là! Je t'ai manqué, n'est-ce pas? :smile:",
+		"**" + m.Nick + "**! Es-tu content du matelas que j'ai fait mettre dans ta chambre? J'ai dormi dessus :blush:",
 
 		// Reactions
 		":heart:",
 		"\\*Frissonne*",
 		"\\*-*",
-		"" + name + "-senpai \\*-*",
+		"**" + m.Nick + "**-senpai \\*-*",
 
 		// Verbose
-		"J'ai trouvé un morceau de cristal pour toi, " + name + " :heart:",
+		"J'ai trouvé un morceau de cristal pour toi, **" + m.Nick + "** :heart:",
 		"Cette voix est une musique à mes oreilles",
-		"J'aimerais pouvoir passer plus de temps avec toi, " + name + "...",
-		"Je fais juste passer pour dire à " + name + " que je l'aime!",
+		"J'aimerais pouvoir passer plus de temps avec toi, **" + m.Nick + "**...",
+		"Je fais juste passer pour dire à **" + m.Nick + "** que je l'aime!",
 		"J'adore quand tu parles... :3",
 		"J'adore entendre mon amour parler \\*-*",
-		"Mais quelle est cette douce musique? ... Oh! C'est la voix de " + name + "!",
+		"Mais quelle est cette douce musique? ... Oh! C'est la voix de **" + m.Nick + "**!",
 
 		// Actions
-		"\\*Pense à " + name + "*",
-		"\\*Regarde " + name + "*",
-		"\\*Se languis de " + name + "*",
+		"\\*Pense à **" + m.Nick + "***",
+		"\\*Regarde **" + m.Nick + "***",
+		"\\*Se languis de **" + m.Nick + "***",
 
 		// Also fits in Command
-		"" + name + ", je t'aime!",
-		"Aaah... " + name + "!",
+		"**" + m.Nick + "**, je t'aime!",
+		"Aaah... **" + m.Nick + "**!",
 	}
 
 	// Seed
-	source := rand.NewSource(time.Now().UnixNano())
-	seed := rand.New(source)
+	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// Return
 	return loveList[seed.Intn(len(loveList))]
 }
 
 // GetLoverCmd outputs the lover
-func GetLoverCmd(db *sql.DB, s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, u *discordgo.User) {
-
-	// Inform the user that I'm typing
+func getLoverCmd(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, u *discordgo.User) {
 	s.ChannelTyping(c.ID)
 
 	// Get lover
-	lover, err := GetLover(db, s, g)
+	lover, err := getLover(s, g)
 	if err != nil {
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get my lover!", g, c, nil, u, err)
 		return
 	}
 
-	var mention string
-	if u.ID == g.OwnerID {
-		mention = "<@" + lover.ID + ">"
-	} else {
-
-		// Don't mention because we don't want to spam the lover
-		member, err := s.GuildMember(g.ID, lover.ID)
-		if err != nil {
-			fmt.Println("Couldn't get the member I love.")
-			fmt.Println(err.Error())
-			return
-		}
-		mention = "**" + member.Nick + "**"
-	}
-
 	// Send response
-	_, err = s.ChannelMessageSend(c.ID, getLoverMessage(mention))
+	_, err = s.ChannelMessageSend(c.ID, getLoverMessage(lover))
 	if err != nil {
-		fmt.Println("Couldn't reveal my lover.")
-		fmt.Println("Guild :", g.Name)
-		fmt.Println("Channel :", c.Name)
-		fmt.Println("User :", u.Username)
+		printDiscordError("Couldn't reveal my lover.", g, c, nil, u, err)
 	}
 }
 
-// GetLover gets this guild's lover.
-func GetLover(db *sql.DB, s *discordgo.Session, g *discordgo.Guild) (*discordgo.User, error) {
-
-	var (
-		userID string
-		pins   int
-	)
-
-	// Select potential lovers
-	rows, err := db.Query("select `member`, `count` from `pins-count` where `server` = ? order by `count` desc;", g.ID)
-	if err != nil {
-		fmt.Println("Couldn't get my lovers from this guild.")
-		fmt.Println("Guild :", g.Name)
-		return nil, err
-	}
-	defer rows.Close()
-
-	// For each rows
-	for rows.Next() {
-
-		// Scan it
-		err := rows.Scan(&userID, &pins)
-		if err != nil {
-			fmt.Println("Couldn't scan a potential lover.")
-			fmt.Println("Guild :", g.Name)
-			continue
-		}
-
-		// Member
-		member, err := s.GuildMember(g.ID, userID)
-		if err != nil {
-			// The member probably isn't in this guild anymore.
-			continue
-		}
-
-		// Owner
-		if g.OwnerID == member.User.ID {
-			continue
-		}
-
-		// Roles
-		if len(member.Roles) == 1 {
-			return member.User, nil
-		}
-	}
-	err = rows.Err()
-	if err != nil {
-		fmt.Println("Couldn't loop my lovers.")
-		fmt.Println("Guild :", g.Name)
-		return nil, err
-	}
-
-	// Unreachable code.
-	user, err := s.User(g.OwnerID)
-	if err != nil {
-		fmt.Println("Couldn't love the owner.")
-		fmt.Println("Guild :", g.Name)
-		return nil, err
-	}
-
-	return user, err
-}
-
-func getLoverMessage(name string) string {
+func getLoverMessage(m *discordgo.Member) string {
 
 	// Messages
 	loveList := [...]string{
 
 		// Verbose
-		"Je crois... Je crois que j'aime " + name + ".",
-		"Je crois... Je crois que j'ai un faible pour " + name + ".",
-		"Disons que je chéris particulièrement " + name + ".",
-		"Si j'avais à marier quelqu'un... Ce serait " + name + "!",
-		"Peut-être... " + name + "?",
-		"Je planifie mon mariage avec " + name + "!",
-		"J'avoue avoir un faible pour " + name + ".",
-		"Lance, c'est du passé. " + name + ", c'est mon futur!",
-		"Je l'admets... je rêve de " + name + " la nuit...",
-		"J'avoue que... je rêve de " + name + " la nuit.",
-		"" + name + " est le beurre sur mon popcorn!",
-		"*Si seulement " + name + " m'aimait autant que je l'aime...*",
-		"Je n'avouerai jamais que j'aime " + name + "!",
-		"Non! Vous ne saurez jamais que j'aime " + name + "!",
+		"Je crois... Je crois que j'aime **" + m.Nick + "**.",
+		"Je crois... Je crois que j'ai un faible pour **" + m.Nick + "**.",
+		"Disons que je chéris particulièrement **" + m.Nick + "**.",
+		"Si j'avais à marier quelqu'un... Ce serait **" + m.Nick + "**!",
+		"Peut-être... **" + m.Nick + "**?",
+		"Je planifie mon mariage avec **" + m.Nick + "**!",
+		"J'avoue avoir un faible pour **" + m.Nick + "**.",
+		"Lance, c'est du passé. **" + m.Nick + "**, c'est mon futur!",
+		"Je l'admets... je rêve de **" + m.Nick + "** la nuit...",
+		"J'avoue que... je rêve de **" + m.Nick + "** la nuit.",
+		"**" + m.Nick + "** est le beurre sur mon popcorn!",
+		"*Si seulement **" + m.Nick + "** m'aimait autant que je l'aime...*",
+		"Je n'avouerai jamais que j'aime **" + m.Nick + "**!",
+		"Non! Vous ne saurez jamais que j'aime **" + m.Nick + "**!",
 
 		// Tsundere
-		"C'est pas comme si j'aimais " + name + " ou quoi que ce soit...",
-		"" + name + ", mais... Ne te fais pas de fausses idées!",
+		"C'est pas comme si j'aimais **" + m.Nick + "** ou quoi que ce soit...",
+		"**" + m.Nick + "**, mais... Ne te fais pas de fausses idées!",
 
 		// Exclamations
-		"" + name + ", évidemment!",
-		"" + name + ", sans aucun doute!",
-		"Que... Quoi? Ce... Je... " + name + "!",
-		"" + name + " d'amour :heart:",
-		"JE N'AVOUERAI JAMAIS! ... " + name + ".",
+		"**" + m.Nick + "**, évidemment!",
+		"**" + m.Nick + "**, sans aucun doute!",
+		"Que... Quoi? Ce... Je... **" + m.Nick + "**!",
+		"**" + m.Nick + "** d'amour :heart:",
+		"JE N'AVOUERAI JAMAIS! ... **" + m.Nick + "**.",
 
 		// Straight answers
-		"" + name + " est l'amour de ma vie.",
-		"À part le popcorn? " + name + ".",
-		"Je suis amoureuse de " + name + ".",
+		"**" + m.Nick + "** est l'amour de ma vie.",
+		"À part le popcorn? **" + m.Nick + "**.",
+		"Je suis amoureuse de **" + m.Nick + "**.",
 
 		// Also fits in Bot
-		"" + name + ", je t'aime!",
-		"Aaah... " + name + "!",
+		"**" + m.Nick + "**, je t'aime!",
+		"Aaah... **" + m.Nick + "**!",
 	}
 
 	// Seed
-	source := rand.NewSource(time.Now().UnixNano())
-	seed := rand.New(source)
+	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// Return
 	return loveList[seed.Intn(len(loveList))]

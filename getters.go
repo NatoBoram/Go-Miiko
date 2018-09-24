@@ -236,3 +236,32 @@ func getMinimumReactions(g *discordgo.Guild, c *discordgo.Channel) (int, error) 
 
 	return max, err
 }
+
+// Lover
+func getLover(s *discordgo.Session, g *discordgo.Guild) (member *discordgo.Member, err error) {
+
+	// Get potential lovers
+	members, err := selectLovers(g)
+	if err != nil {
+		return nil, err
+	}
+
+	// For each potential lovers
+	for _, potential := range members {
+		fmt.Println("Potential :", potential)
+
+		// Get member
+		member, err := s.GuildMember(g.ID, potential)
+		if err != nil {
+			continue
+		}
+
+		// Check if light / mod / admin / owner
+		is, err := isLightOrOver(s, g, member)
+		if !is {
+			return member, err
+		}
+	}
+
+	return nil, errors.New("there's no potential lover in this guild")
+}

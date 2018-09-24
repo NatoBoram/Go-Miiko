@@ -39,6 +39,38 @@ func selectPin(m *discordgo.Message) (id string, err error) {
 	return
 }
 
+func selectLovers(g *discordgo.Guild) (members []string, err error) {
+
+	// Query
+	rows, err := db.Query("select `member` from `pins` where `server` = ? group by `member` order by count(`message`) desc;", g.ID)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	// Select
+	for rows.Next() {
+
+		// Get a member
+		var member string
+		err = rows.Scan(&member)
+		if err != nil {
+			return
+		}
+
+		// Place it in a list
+		members = append(members, member)
+	}
+
+	// Check for errors
+	err = rows.Err()
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 // Insert Pin
 func insertPin(g *discordgo.Guild, m *discordgo.Message) (res sql.Result, err error) {
 	return db.Exec("insert into `pins`(`server`, `message`, `member`) values(?, ?, ?)", g.ID, m.ID, m.Author.ID)

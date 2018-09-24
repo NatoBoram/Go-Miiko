@@ -12,7 +12,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 		// get lover
 		case "lover":
-			// GetLoverCmd(db, s, g, c, m.Author)
+			getLoverCmd(s, g, c, m.Author)
 
 		// get points
 		case "points":
@@ -126,7 +126,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	} else {
 
 		// get
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `lover`, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
