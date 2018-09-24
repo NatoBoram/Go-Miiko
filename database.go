@@ -40,8 +40,8 @@ func selectPin(m *discordgo.Message) (id string, err error) {
 }
 
 // Insert Pin
-func insertPin(g *discordgo.Guild, u *discordgo.User, m *discordgo.Message) (res sql.Result, err error) {
-	return db.Exec("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)", g.ID, u.ID, m.ID)
+func insertPin(g *discordgo.Guild, m *discordgo.Message) (res sql.Result, err error) {
+	return db.Exec("insert into `pins`(`server`, `message`, `member`) values(?, ?, ?)", g.ID, m.ID, m.Author.ID)
 }
 
 // Update Pin
