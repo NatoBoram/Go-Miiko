@@ -248,7 +248,6 @@ func getLover(s *discordgo.Session, g *discordgo.Guild) (member *discordgo.Membe
 
 	// For each potential lovers
 	for _, potential := range members {
-		fmt.Println("Potential :", potential)
 
 		// Get member
 		member, err := s.GuildMember(g.ID, potential)
