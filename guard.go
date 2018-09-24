@@ -83,6 +83,7 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			printDiscordError("Couldn't add a role.", g, c, m, nil, err)
+			_, err = s.ChannelMessageSend(m.ChannelID, "<@"+g.OwnerID+"> Je n'ai pas pu donner le rôle <@&"+guard.ID+"> à <@"+u.User.ID+">. Peut-être que je n'ai pas la permission?")
 			return false
 		}
 
@@ -104,6 +105,7 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			printDiscordError("Couldn't add a role.", g, c, m, nil, err)
+			_, err = s.ChannelMessageSend(m.ChannelID, "<@"+g.OwnerID+"> Je n'ai pas pu donner le rôle <@&"+guard.ID+"> à <@"+u.User.ID+">. Peut-être que je n'ai pas la permission?")
 			return false
 		}
 
@@ -119,6 +121,7 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		err := s.GuildMemberRoleAdd(g.ID, u.User.ID, guard.ID)
 		if err != nil {
 			printDiscordError("Couldn't add a role.", g, c, m, nil, err)
+			_, err = s.ChannelMessageSend(m.ChannelID, "<@"+g.OwnerID+"> Je n'ai pas pu donner le rôle <@&"+guard.ID+"> à <@"+u.User.ID+">. Peut-être que je n'ai pas la permission?")
 			return false
 		}
 
