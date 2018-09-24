@@ -11,3 +11,12 @@ var (
 	me     *discordgo.User
 	master *discordgo.User
 )
+
+var popcornStrings = [...]string{
+	"popcorn",
+	"pop-corn",
+	"pop corn",
+	"maïs soufflé",
+	"maïs éclaté",
+	"🍿",
+}

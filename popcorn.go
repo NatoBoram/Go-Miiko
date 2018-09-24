@@ -13,10 +13,10 @@ import (
 )
 
 // Popcorn command
-func Popcorn(s *discordgo.Session, c *discordgo.Channel, m *discordgo.Message) bool {
+func popcorn(s *discordgo.Session, c *discordgo.Channel, m *discordgo.Message) (done bool) {
 
 	// Check for "pop-corn", "popcorn", "maïs soufflé", "maïs éclaté", "pop corn"
-	if strings.Contains(strings.ToLower(m.Content), "popcorn") || strings.Contains(strings.ToLower(m.Content), "pop-corn") || strings.Contains(strings.ToLower(m.Content), "maïs soufflé") || strings.Contains(strings.ToLower(m.Content), "maïs éclaté") || strings.Contains(strings.ToLower(m.Content), "pop corn") {
+	if strings.Contains(strings.ToLower(m.Content), "popcorn") || strings.Contains(strings.ToLower(m.Content), "pop-corn") || strings.Contains(strings.ToLower(m.Content), "maïs soufflé") || strings.Contains(strings.ToLower(m.Content), "maïs éclaté") || strings.Contains(strings.ToLower(m.Content), "pop corn") || strings.Contains(strings.ToLower(m.Content), "🍿") {
 
 		// Seed
 		seed := time.Now().UnixNano()

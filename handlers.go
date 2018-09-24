@@ -95,7 +95,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Popcorn!
-	done = Popcorn(s, channel, m.Message)
+	done = popcorn(s, channel, m.Message)
 	if done {
 		return
 	}
