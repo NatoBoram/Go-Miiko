@@ -76,6 +76,15 @@ func getWelcomeMessage(username string) string {
 		"Une bonne main d'applaudissement pour <@" + username + ">!",
 	}
 
+	// Random
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Return
+	return welcomeList[random.Intn(len(welcomeList))] + " " + getAskForGuardMessage()
+}
+
+func getAskForGuardMessage() string {
+
 	// What's your guard?
 	questionList := [...]string{
 		"Dans quelle garde es-tu?",
@@ -96,12 +105,10 @@ func getWelcomeMessage(username string) string {
 	}
 
 	// Random
-	seed := time.Now().UnixNano()
-	source := rand.NewSource(seed)
-	rand := rand.New(source)
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// Return
-	return welcomeList[rand.Intn(len(welcomeList))] + " " + questionList[rand.Intn(len(questionList))]
+	return questionList[random.Intn(len(questionList))]
 }
 
 func getWelcomeBotMessage(userID string) string {

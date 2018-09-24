@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 // PlaceInAGuard gives members a role.
@@ -37,18 +39,37 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		table = tables[0]
 	} else if len(guards) > 1 {
 		s.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
+		return true
+	} else if len(guards) == 0 {
+
+		// Why are you ignoring me?
+		random := rand.New(rand.NewSource(time.Now().UnixNano()))
+		if random.Float64() <= 1/math.Pow(wheel.Phi(), 3) {
+
+			// Typing!
+			err = s.ChannelTyping(m.ChannelID)
+			if err != nil {
+				printDiscordError("Couldn't tell that I'm typing.", g, c, m, nil, err)
+			}
+
+			// Protest
+			_, err = s.ChannelMessageSend(m.ChannelID, getProtestMessage(u.User))
+			if err != nil {
+				printDiscordError("Couldn't protest being ignored.", g, c, m, nil, err)
+				return false
+			}
+			return true
+		}
 		return false
 	} else {
-		// Why are you ignoring me?
+		// Unreachable code
 		return false
 	}
 
 	// Typing!
 	err = s.ChannelTyping(m.ChannelID)
 	if err != nil {
-		fmt.Println("Couldn't tell that I'm typing.")
-		fmt.Println("Channel : " + c.Name)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't tell that I'm typing.", g, c, m, nil, err)
 	}
 
 	if table == tableLight {
@@ -255,4 +276,45 @@ func getGuardMessage(user *discordgo.User, role *discordgo.Role) string {
 
 	// Return
 	return messageList[random.Intn(len(messageList))]
+}
+
+func getProtestMessage(u *discordgo.User) string {
+
+	// Messages
+	protestList := [...]string{
+		"J'apprécierais de ne pas me faire ignorer, <@" + u.ID + ">.",
+		"J'apprécierais vraiment de ne pas me faire ignorer, <@" + u.ID + ">.",
+		"J'apprécierais *vraiment* de ne pas me faire ignorer, <@" + u.ID + ">.",
+
+		"<@" + u.ID + ">, j'apprécierais de ne pas me faire ignorer.",
+		"<@" + u.ID + ">, j'apprécierais vraiment de ne pas me faire ignorer.",
+		"<@" + u.ID + ">, j'apprécierais *vraiment* de ne pas me faire ignorer.",
+
+		"Je déteste me faire ignorer, <@" + u.ID + ">.",
+		"Je déteste vraiment me faire ignorer, <@" + u.ID + ">.",
+		"Je déteste *vraiment* me faire ignorer, <@" + u.ID + ">.",
+
+		"<@" + u.ID + ">, je déteste me faire ignorer.",
+		"<@" + u.ID + ">, je déteste vraiment me faire ignorer.",
+		"<@" + u.ID + ">, je déteste *vraiment* me faire ignorer.",
+
+		"Tu dois m'indiquer ta garde, <@" + u.ID + ">.",
+		"<@" + u.ID + ">, tu dois m'indiquer ta garde, .",
+
+		"Je me répète, <@" + u.ID + ">.",
+		"<@" + u.ID + ">, je me répète :",
+	}
+
+	// Ask for guard, but less friendly
+	askList := [...]string{
+		"Quelle est ta garde?",
+		"De quelle garde fais-tu partie?",
+		"Dans quelle garde es-tu?",
+	}
+
+	// Seed
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Return
+	return protestList[random.Intn(len(protestList))] + " " + askList[random.Intn(len(askList))]
 }
