@@ -202,7 +202,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Love!
-	// done = love(s, guild, channel, m.Message)
+	done = love(s, guild, channel, m.Message)
 	if done {
 		return
 	}
