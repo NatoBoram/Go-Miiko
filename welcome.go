@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -14,20 +13,14 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, u *discordgo.User) {
 	// Make sure the channel exists
 	channel, err := getWelcomeChannel(s, g)
 	if err != nil {
-		fmt.Println("Couldn't get the channel structure of a welcome channel.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't get the channel structure of a welcome channel.", g, nil, nil, u, err)
 		return
 	}
 
 	// Typing!
 	err = s.ChannelTyping(channel.ID)
 	if err != nil {
-		fmt.Println("Couldn't tell everyone I'm typing some welcome message.")
-		fmt.Println("Guild : " + g.Name)
-		fmt.Println("Channel : " + channel.Name)
-		fmt.Println("Member : " + u.Username)
-		fmt.Println(err.Error())
+		printDiscordError("Couldn't tell everyone I'm typing some welcome message.", g, channel, nil, u, err)
 	}
 
 	if !u.Bot {
@@ -35,11 +28,7 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, u *discordgo.User) {
 		// Ask newcomer what's their guard
 		_, err = s.ChannelMessageSend(channel.ID, getWelcomeMessage(u.ID))
 		if err != nil {
-			fmt.Println("Couldn't welcome a user.")
-			fmt.Println("Guild : " + g.Name)
-			fmt.Println("Channel : " + channel.Name)
-			fmt.Println("Member : " + u.Username)
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't welcome a user.", g, channel, nil, u, err)
 		}
 
 	} else if u.ID != me.ID {
@@ -47,11 +36,7 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, u *discordgo.User) {
 		// Fear the bot!
 		_, err = s.ChannelMessageSend(channel.ID, getWelcomeBotMessage(u.ID))
 		if err != nil {
-			fmt.Println("Couldn't welcome a bot.")
-			fmt.Println("Guild : " + g.Name)
-			fmt.Println("Channel : " + channel.Name)
-			fmt.Println("Member : " + u.Username)
-			fmt.Println(err.Error())
+			printDiscordError("Couldn't welcome a bot.", g, channel, nil, u, err)
 		}
 	}
 }
