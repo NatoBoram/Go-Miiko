@@ -12,9 +12,9 @@ func info(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *dis
 	if len(ms) > 3 {
 		switch ms[2] {
 		case "channel":
+			infoChannelCommand(s, g, c, m, ms[3])
 		case "member":
 			infoMemberCommand(s, g, c, m, ms[3])
-		case "user":
 
 		// info ?
 		default:
@@ -26,7 +26,29 @@ func info(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *dis
 }
 
 func infoChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, id string) {
+	s.ChannelTyping(c.ID)
 
+	channel, err := s.State.Channel(id)
+	if err != nil {
+		printDiscordError("Couldn't get the specified channel.", g, c, m, nil, err)
+		return
+	}
+
+	// Create Embed
+	embed := &discordgo.MessageEmbed{
+		Color:  colourBot,
+		Fields: []*discordgo.MessageEmbedField{},
+	}
+
+	embed.Fields = addEmbedField(embed.Fields, "Name", channel.Name, true)
+	embed.Fields = addEmbedField(embed.Fields, "NSFW", strconv.FormatBool(channel.NSFW), true)
+	embed.Fields = addEmbedField(embed.Fields, "Topic", channel.Topic, true)
+
+	// Send embed
+	_, err = s.ChannelMessageSendEmbed(c.ID, embed)
+	if err != nil {
+		printDiscordError("Couldn't send an embed.", g, c, m, nil, err)
+	}
 }
 
 func addEmbedField(fields []*discordgo.MessageEmbedField, name string, value string, inline bool) []*discordgo.MessageEmbedField {
@@ -89,8 +111,4 @@ func infoMemberCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Ch
 	if err != nil {
 		printDiscordError("Couldn't send an embed.", g, c, m, nil, err)
 	}
-}
-
-func infoUserCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, id string) {
-
 }
