@@ -9,28 +9,68 @@ import (
 func info(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, ms []string) {
 
 	// info
-	if len(ms) > 3 {
+	if len(ms) > 2 {
 		switch ms[2] {
+
+		// info channel
 		case "channel":
-			infoChannelCommand(s, g, c, m, ms[3])
+			if len(ms) > 3 {
+				infoChannelCommand(s, g, c, m, ms[3])
+			} else {
+
+				// info channel ?
+				_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un salon.")
+				if err != nil {
+					printDiscordError("Couldn't help an info channel command.", g, c, m, nil, err)
+				}
+			}
+
+		// info member
 		case "member":
-			infoMemberCommand(s, g, c, m, ms[3])
+			if len(ms) > 3 {
+				infoMemberCommand(s, g, c, m, ms[3])
+			} else {
+
+				// info member ?
+				_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un membre.")
+				if err != nil {
+					printDiscordError("Couldn't help an info member command.", g, c, m, nil, err)
+				}
+			}
 
 		// info ?
 		default:
+			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
+				"Les commandes disponibles sont `channel` et `member`.")
+			if err != nil {
+				printDiscordError("Couldn't help an info command.", g, c, m, nil, err)
+				return
+			}
 		}
-	} else {
-		// info
 
+	} else {
+
+		// info
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `channel` et `member`.")
+		if err != nil {
+			printDiscordError("Couldn't help an info command.", g, c, m, nil, err)
+		}
 	}
 }
 
 func infoChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, id string) {
 	s.ChannelTyping(c.ID)
 
+	// Get channel
 	channel, err := s.State.Channel(id)
 	if err != nil {
 		printDiscordError("Couldn't get the specified channel.", g, c, m, nil, err)
+
+		// This channel doesn't exist.
+		_, err := s.ChannelMessageSend(c.ID, "Ce salon n'existe pas.")
+		if err != nil {
+			printDiscordError("Couldn't announce that the specified channel doesn't exist.", g, c, m, nil, err)
+		}
 		return
 	}
 
@@ -78,6 +118,12 @@ func infoMemberCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Ch
 	member, err := s.GuildMember(g.ID, id)
 	if err != nil {
 		printDiscordError("Couldn't get a guild's member.", g, c, m, nil, err)
+
+		// This member doesn't exist.
+		_, err := s.ChannelMessageSend(c.ID, "Ce membre n'existe pas.")
+		if err != nil {
+			printDiscordError("Couldn't announce that the specified member doesn't exist.", g, c, m, nil, err)
+		}
 		return
 	}
 
