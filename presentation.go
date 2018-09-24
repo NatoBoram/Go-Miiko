@@ -1,27 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func askForIntroduction(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) {
+func askForIntroduction(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel) (err error) {
 
+	// Get the presentation channel
 	channel, err := getPresentationChannel(s, g)
 	if err != nil {
-		// There's no presentation channel.
-		return
+		return err
 	}
 
+	// Send the introduction message
 	_, err = s.ChannelMessageSend(c.ID, getIntroductionMessage(channel))
-	if err != nil {
-		fmt.Println("Couldn't ask for introduction.")
-		fmt.Println("Guild :", g.Name)
-		fmt.Println("Channel :", c.Name)
-	}
+	return
 }
 
 func getIntroductionMessage(c *discordgo.Channel) string {
