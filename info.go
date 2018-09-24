@@ -40,8 +40,17 @@ func infoChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.C
 		Fields: []*discordgo.MessageEmbedField{},
 	}
 
+	// embed.Fields = addEmbedField(embed.Fields, "Bitrate", strconv.Itoa(channel.Bitrate), true)
+	// embed.Fields = addEmbedField(embed.Fields, "GuildID", channel.GuildID, true)
+	embed.Fields = addEmbedField(embed.Fields, "ID", channel.ID, true)
+	// embed.Fields = addEmbedField(embed.Fields, "LastMessageID", channel.LastMessageID, true)
+	// embed.Fields = addEmbedField(embed.Fields, "Messages", strconv.Itoa(len(channel.Messages)), true)
 	embed.Fields = addEmbedField(embed.Fields, "Name", channel.Name, true)
 	embed.Fields = addEmbedField(embed.Fields, "NSFW", strconv.FormatBool(channel.NSFW), true)
+	// embed.Fields = addEmbedField(embed.Fields, "ParentID", channel.ParentID, true)
+	// embed.Fields = addEmbedField(embed.Fields, "PermissionOverwrites", strconv.Itoa(len(channel.PermissionOverwrites)), true)
+	// embed.Fields = addEmbedField(embed.Fields, "Position", strconv.Itoa(channel.Position), true)
+	// embed.Fields = addEmbedField(embed.Fields, "Recipients", strconv.Itoa(len(channel.Recipients)), true)
 	embed.Fields = addEmbedField(embed.Fields, "Topic", channel.Topic, true)
 
 	// Send embed
