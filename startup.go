@@ -1,14 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func refresh(db *sql.DB, s *discordgo.Session) {
+func refresh(s *discordgo.Session) {
 
 	// Wait for a minute
 	time.Sleep(time.Minute)
