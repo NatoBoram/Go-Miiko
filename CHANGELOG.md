@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 * Guard detection
 * Authority detection
 * Self-assignable roles
+* `info` command to get information in the form of a Rich Embed about a member
 
 ### Changed
 
@@ -28,10 +29,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Fixed
 
 * Members with more than one role will no longuer surpass her intellectual capabilities
+* Fixed a bug where she wouldn't ask for guard if the welcome channel was set by Discord's welcome message
 
 ### Security
 
-* Ban new members with `discord.gg` in their username.
+* Ban new members with `discord.gg` in their username
+* New permission management system for internal commands
 
 ## [2.0.0] - 2018-09-01
 
