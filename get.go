@@ -117,7 +117,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		// get ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont ~~`lover`~~, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
+				"Les commandes disponibles sont `lover`, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
