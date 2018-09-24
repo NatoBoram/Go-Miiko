@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -28,11 +27,8 @@ func popcorn(s *discordgo.Session, c *discordgo.Channel, m *discordgo.Message) (
 		return false
 	}
 
-	// Seed
-	random := rand.New(rand.NewSource(time.Now().UnixNano()))
-
 	// Increase the power of Phi to reduce chances.
-	if random.Float64() <= 1/math.Pow(wheel.Phi(), 1) {
+	if wheel.RandomOverPhiPower(1) {
 
 		// It's popcorn time!
 		s.ChannelTyping(c.ID)

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -43,8 +42,7 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 	} else if len(guards) == 0 {
 
 		// Why are you ignoring me?
-		random := rand.New(rand.NewSource(time.Now().UnixNano()))
-		if random.Float64() <= 1/math.Pow(wheel.Phi(), 3) {
+		if wheel.RandomOverPhiPower(3) {
 
 			// Typing!
 			err = s.ChannelTyping(m.ChannelID)

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
@@ -23,14 +22,8 @@ func love(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *dis
 	// Verify if it's the one true love
 	if m.Author.ID == lover.ID {
 
-		// Random
-		seed := time.Now().UnixNano()
-		source := rand.NewSource(seed)
-		rand := rand.New(source)
-		random := rand.Float64()
-
 		// Rate Limit
-		if random < 1/(wheel.Phi()*100) {
+		if wheel.RandomOverPhiPower(100) {
 
 			// Member
 			member, err := s.GuildMember(g.ID, lover.ID)

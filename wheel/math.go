@@ -1,6 +1,10 @@
 package wheel
 
-import "math"
+import (
+	"math"
+	"math/rand"
+	"time"
+)
 
 // Phi represents the Golden Ratio.
 func Phi() float64 {
@@ -31,4 +35,19 @@ func StringInSlice(str string, list []string) bool {
 		}
 	}
 	return false
+}
+
+// RandomOverPhiPower gives a random `bool` according to the following formula : `random <= 1/phi^x`.
+// The larger is `x`, the smaller the chances of obtaining `true`.
+//
+// Examples :
+// 0 = 100%
+// 1 =  62%
+// 2 =  38%
+// 3 =  24%
+// 5 =   9%
+// 10 =  1%
+// 100 = 0%
+func RandomOverPhiPower(power float64) bool {
+	return rand.New(rand.NewSource(time.Now().UnixNano())).Float64() <= 1/math.Pow(Phi(), power)
 }
