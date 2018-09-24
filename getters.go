@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"math"
@@ -214,6 +215,9 @@ func getMinimumReactions(g *discordgo.Guild, c *discordgo.Channel) (int, error) 
 
 	// Channel
 	channelMin, err := selectMinimumReactions(c)
+	if err == sql.ErrNoRows {
+		_, err = insertMinimumReactions(c, pinAbsoluteMinimum)
+	}
 
 	// Absolute
 	minimums := []int{
