@@ -42,7 +42,7 @@ func selectPin(m *discordgo.Message) (id string, err error) {
 func selectLovers(g *discordgo.Guild) (members []string, err error) {
 
 	// Query
-	rows, err := db.Query("select `member` from `pins` where `server` = ? group by `member` order by count(`message`) desc;", g.ID)
+	rows, err := db.Query("select `member` from `pins` where `server` = ? group by `member` order by count(`message`) desc, `member` asc;", g.ID)
 	if err != nil {
 		return
 	}
