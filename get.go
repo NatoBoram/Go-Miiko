@@ -14,6 +14,10 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		case "lover":
 			getLoverCmd(s, g, c, m.Author)
 
+		// get crush
+		case "crush":
+			getLoverCmd(s, g, c, m.Author)
+
 		// get points
 		case "points":
 			// GetPoints(s, g, c, m)
@@ -117,7 +121,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		// get ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont `lover`, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
+				"Les commandes disponibles sont `crush`, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
@@ -126,7 +130,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	} else {
 
 		// get
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `lover`, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `crush`, ~~`points`~~, `presentation`, `role`, `roles` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
