@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"database/sql"
 
+	"github.com/bwmarrin/discordgo"
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
@@ -54,10 +55,17 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			return
 		}
 
-		// Add it to database!
-		_, err = insertPin(g, m)
-		if err != nil {
-			printDiscordError("Couldn't insert a pin", g, nil, m, nil, err)
+		// Check if already in the database
+		_, err := selectPin(m)
+		if err == sql.ErrNoRows {
+
+			// Not previously pinned, time to insert it!
+			_, err = insertPin(g, m)
+			if err != nil {
+				printDiscordError("Couldn't insert a pin.", g, c, m, nil, err)
+			}
+		} else if err != nil {
+			printDiscordError("Couldn't select a pin.", g, c, m, nil, err)
 		}
 	}
 }
