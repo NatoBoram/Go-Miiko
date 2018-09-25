@@ -35,7 +35,7 @@ func updateWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Res
 
 // Select Pin
 func selectPin(m *discordgo.Message) (id string, err error) {
-	err = db.QueryRow("select `server`, `member`, `message` from `pins` where `message` = ?;", m.ID).Scan(&id)
+	err = db.QueryRow("select `message` from `pins` where `message` = ?;", m.ID).Scan(&id)
 	return
 }
 
