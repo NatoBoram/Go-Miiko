@@ -37,6 +37,8 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		guard = guards[0]
 		table = tables[0]
 	} else if len(guards) > 1 {
+
+		// If there's more than one...
 		s.ChannelMessageSend(c.ID, "Désolée, mais je ne peux t'offrir qu'une seule garde.")
 		return true
 	} else if len(guards) == 0 {
@@ -58,9 +60,6 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 			}
 			return true
 		}
-		return false
-	} else {
-		// Unreachable code
 		return false
 	}
 
