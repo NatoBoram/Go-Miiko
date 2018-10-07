@@ -37,7 +37,10 @@ func main() {
 	fmt.Println("Hi, master " + master.Username + ". I am " + me.Username + ", and everything's all right!")
 
 	// Catch up with the latest news
-	refresh(session)
+	go refresh(session)
+
+	// Create a status
+	go statusLoop(session)
 
 	// Wait for future input
 	<-make(chan struct{})
