@@ -40,7 +40,7 @@ func main() {
 	go refresh(session)
 
 	// Create a status
-	go statusLoop(session)
+	// go statusLoop(session)
 
 	// Wait for future input
 	<-make(chan struct{})
