@@ -28,6 +28,7 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 	// Check the reactions
 	if singleReactionCount >= minReactions {
+		s.UpdateStatus(0, "Épingler "+m.Author.Username)
 
 		// Pin it!
 		err = s.ChannelMessagePin(c.ID, m.ID)
