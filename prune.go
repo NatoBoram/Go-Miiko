@@ -37,6 +37,7 @@ func prune(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *di
 	}
 
 	// Pruning for this server!
+	s.UpdateStatus(0, "purger "+g.Name)
 	pruning[g.ID] = true
 	start := time.Now()
 
