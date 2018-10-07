@@ -74,6 +74,8 @@ func refresh(s *discordgo.Session) {
 				continue
 			}
 
+			s.UpdateStatus(0, "vérifier "+guild.Name+"/"+channel.Name)
+
 			// For each pin
 			for _, message := range pins {
 
