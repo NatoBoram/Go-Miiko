@@ -54,6 +54,7 @@ func refresh(s *discordgo.Session) {
 
 	// For each guilds
 	for _, guild := range s.State.Guilds {
+		s.UpdateStatus(0, "vérifier "+guild.Name)
 
 		// For each channels
 		for _, channel := range guild.Channels {
