@@ -82,24 +82,6 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// Guard
-	done = placeInAGuard(s, guild, channel, member, m.Message)
-	if done {
-		return
-	}
-
-	// Nani?!
-	done = Nani(s, m.Message)
-	if done {
-		return
-	}
-
-	// Popcorn!
-	done = popcorn(s, channel, m.Message)
-	if done {
-		return
-	}
-
 	// Mentionned someone?
 	if len(m.Mentions) == 1 {
 
@@ -199,6 +181,24 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				}
 			}
 		}
+	}
+
+	// Guard
+	done = placeInAGuard(s, guild, channel, member, m.Message)
+	if done {
+		return
+	}
+
+	// Nani?!
+	done = Nani(s, m.Message)
+	if done {
+		return
+	}
+
+	// Popcorn!
+	done = popcorn(s, channel, m.Message)
+	if done {
+		return
 	}
 
 	// Love!
