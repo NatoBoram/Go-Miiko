@@ -83,12 +83,15 @@ func writeDiscord(object Discord) error {
 
 func writeTemplateDatabase() error {
 	fmt.Println("Writing a new database configuration template...")
-	var database Database
-	return writeDatabase(database)
+	return writeDatabase(Database{
+		User:     "Miiko",
+		Address:  "localhost",
+		Port:     3306,
+		Database: "Miiko",
+	})
 }
 
 func writeTemplateDiscord() error {
 	fmt.Println("Writing a new Discord configuration template...")
-	var discord Discord
-	return writeDiscord(discord)
+	return writeDiscord(Discord{})
 }
