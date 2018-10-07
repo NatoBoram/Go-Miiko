@@ -122,6 +122,32 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 				}
 			}
 
+		// set status
+		case "status":
+
+			// Lock to master only
+			if m.Author.ID != master.ID {
+				_, err := s.ChannelMessageSend(c.ID, "Cette commande est réservée à **"+master.Username+"**.")
+				if err != nil {
+					printDiscordError("Couldn't tell that set status is locked to owner.", g, c, m, nil, err)
+				}
+				return
+			}
+
+			if len(ms) > 3 {
+
+				// Update status
+				s.UpdateStatus(0, strings.Join(ms[3:], " "))
+
+			} else {
+
+				// set status
+				_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un status.")
+				if err != nil {
+					printDiscordError("Couldn't help a set status command.", g, c, m, nil, err)
+				}
+			}
+
 		// set welcome
 		case "welcome":
 			if len(ms) > 3 {
