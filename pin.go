@@ -72,6 +72,7 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 }
 
 func purgePin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, messages []*discordgo.Message) {
+	s.UpdateStatus(0, "augmenter la difficulté de "+c.Name)
 
 	// Check minimum
 	channelMin, err := selectMinimumReactions(c)
