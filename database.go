@@ -76,6 +76,11 @@ func createTableMinimumReactions() (res sql.Result, err error) {
 	return db.Exec("create table if not exists `" + tableMinimumReactions + "` (`channel` varchar(32) primary key, `minimum` int not null) engine=InnoDB default charset=utf8mb4;")
 }
 
+// Status
+func createTableStatus() (res sql.Result, err error) {
+	return db.Exec("create table if not exists `" + tableStatus + "` (`id` int auto_increment primary key, `status` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+}
+
 // Welcome Channel
 
 // Select Welcome Channel
@@ -349,4 +354,27 @@ func insertSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error
 // Delete SAF
 func deleteSAR(g *discordgo.Guild, r *discordgo.Role) (res sql.Result, err error) {
 	return db.Exec("delete from `"+tableSAR+"` where `server` = ? and `role` = ?;", g.ID, r.ID)
+}
+
+// Status
+
+// Insert Status
+func insertStatus(status string) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableStatus+"`(`status`) values(?);", status)
+}
+
+// Delete Status
+func deleteStatus(status int) (res sql.Result, err error) {
+	return db.Exec("delete from `"+tableStatus+"` where `id` = ?;", status)
+}
+
+// Delete All Status
+func emptyStatus() (res sql.Result, err error) {
+	return db.Exec("delete from `" + tableStatus + "`;")
+}
+
+// Select Latest Status
+func selectStatus() (id string, err error) {
+	err = db.QueryRow("select `status` from `" + tableStatus + "` order by `id` desc limit 1;").Scan(&id)
+	return
 }
