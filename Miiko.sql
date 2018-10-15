@@ -104,6 +104,12 @@ create table if not exists `roles-sar` (
 	constraint `pk_roles_sar` primary key (`server`, `role`)
 ) engine=InnoDB default charset=utf8mb4;
 
+-- Status
+create table if not exists `status` (
+	`id` int auto_increment primary key,
+	`status` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4;
+
 -- Views
 
 -- drop view `love`;
