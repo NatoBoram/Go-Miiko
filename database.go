@@ -13,6 +13,69 @@ func toConnectionString(database Database) string {
 	return database.User + ":" + database.Password + "@tcp(" + database.Address + ":" + strconv.Itoa(database.Port) + ")/" + database.Database
 }
 
+// Tables
+
+// Channels
+func createTableChannels() (res sql.Result, err error) {
+
+	// Declare channels
+	channels := [...]string{
+		tableWelcome,
+		tablePresentation,
+	}
+
+	// Create them
+	for _, channel := range channels {
+		res, err = db.Exec("create table if not exists `" + channel + "` (`server` varchar(32) primary key, `channel` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// Roles
+func createTableRoles() (res sql.Result, err error) {
+
+	// Declare roles
+	roles := [...]string{
+		tableAdmin,
+		tableMod,
+		tableLight,
+		tableAbsynthe,
+		tableObsidian,
+		tableShadow,
+		tableEel,
+		tableNPC,
+	}
+
+	// Create them
+	for _, role := range roles {
+		res, err = db.Exec("create table if not exists `" + role + "` (`server` varchar(32) primary key, `role` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// Self-Assignable Roles
+func createTableSAR() (res sql.Result, err error) {
+	return db.Exec("create table if not exists `" + tableSAR + "` (`server` varchar(32) not null, `role` varchar(32) not null, constraint `pk_roles_sar` primary key (`server`, `role`)) engine=InnoDB default charset=utf8mb4;")
+}
+
+// Pins
+func createTablePin() (res sql.Result, err error) {
+	return db.Exec("create table if not exists `" + tablePins + "` (`server` varchar(32) not null, `message` varchar(32) primary key, `member` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+}
+
+// Minimum Reactions
+func createTableMinimumReactions() (res sql.Result, err error) {
+	return db.Exec("create table if not exists `" + tableMinimumReactions + "` (`channel` varchar(32) primary key, `minimum` int not null) engine=InnoDB default charset=utf8mb4;")
+}
+
 // Welcome Channel
 
 // Select Welcome Channel
