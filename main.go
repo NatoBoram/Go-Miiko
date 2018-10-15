@@ -81,7 +81,15 @@ func initDatabase() (err error) {
 		return
 	}
 
-	return nil
+	// Create the tables if they don't exist
+	_, err = createTables()
+	if err != nil {
+		fmt.Println("Could not create a table in the database.")
+		fmt.Println(err.Error())
+		return
+	}
+
+	return
 }
 
 func initDiscord() (s *discordgo.Session, err error) {
