@@ -34,6 +34,7 @@ const (
 	tablePresentation     = "channel-presentation"
 	tablePins             = "pins"
 	tableMinimumReactions = "minimum-reactions"
+	tableStatus           = "status"
 )
 
 // Permissions
