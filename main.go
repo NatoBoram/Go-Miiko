@@ -89,6 +89,14 @@ func initDatabase() (err error) {
 		return
 	}
 
+	// Empty Status
+	_, err = emptyStatus()
+	if err != nil {
+		fmt.Println("Could not empty the status list.")
+		fmt.Println(err.Error())
+		return
+	}
+
 	return
 }
 
