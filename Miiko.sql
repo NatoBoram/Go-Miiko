@@ -101,7 +101,7 @@ create table if not exists `role-npc` (
 create table if not exists `roles-sar` (
 	`server` varchar(32) not null,
 	`role` varchar(32) not null,
-	constraint `pk_roles_saf` primary key (`server`, `role`)
+	constraint `pk_roles_sar` primary key (`server`, `role`)
 ) engine=InnoDB default charset=utf8mb4;
 
 -- Views
