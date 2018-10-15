@@ -112,6 +112,7 @@ func createTables() (res sql.Result, err error) {
 		createTableSAR,
 		createTablePin,
 		createTableMinimumReactions,
+		createTableStatus,
 	}
 
 	// Create the tables
