@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -100,4 +101,26 @@ func refresh(s *discordgo.Session) {
 	duration := time.Since(start)
 	fmt.Println("Finished refresh :", duration.String())
 	s.UpdateStatus(0, "démarrer une belle journée")
+}
+
+func createTables() (res sql.Result, err error) {
+
+	// Declare tables to create
+	functs := [...]func() (res sql.Result, err error){
+		createTableChannels,
+		createTableRoles,
+		createTableSAR,
+		createTablePin,
+		createTableMinimumReactions,
+	}
+
+	// Create the tables
+	for _, funct := range functs {
+		res, err = funct()
+		if err != nil {
+			return
+		}
+	}
+
+	return
 }
