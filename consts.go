@@ -32,6 +32,7 @@ const (
 
 	tableWelcome          = "channel-welcome"
 	tablePresentation     = "channel-presentation"
+	tablePins             = "pins"
 	tableMinimumReactions = "minimum-reactions"
 )
 
