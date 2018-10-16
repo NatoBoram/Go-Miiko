@@ -147,7 +147,9 @@ func infoMemberCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Ch
 	}
 
 	// Member
+	// embed.Fields = addEmbedField(embed.Fields, "Deaf", strconv.FormatBool(member.Deaf), true)
 	embed.Fields = addEmbedField(embed.Fields, "Joined at", member.JoinedAt, true)
+	// embed.Fields = addEmbedField(embed.Fields, "Mute", strconv.FormatBool(member.Mute), true)
 	embed.Fields = addEmbedField(embed.Fields, "Nickname", member.Nick, true)
 	// embed.Fields = addEmbedField(embed.Fields, "Roles", strings.Join(member.Roles, ", "), true)
 
