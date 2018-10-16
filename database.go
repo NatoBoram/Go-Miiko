@@ -364,8 +364,8 @@ func insertStatus(status string) (res sql.Result, err error) {
 }
 
 // Delete Status
-func deleteStatus(status int) (res sql.Result, err error) {
-	return db.Exec("delete from `"+tableStatus+"` where `id` = ?;", status)
+func deleteStatus(id int) (res sql.Result, err error) {
+	return db.Exec("delete from `"+tableStatus+"` where `id` = ?;", id)
 }
 
 // Delete All Status
@@ -374,7 +374,7 @@ func emptyStatus() (res sql.Result, err error) {
 }
 
 // Select Latest Status
-func selectStatus() (id string, err error) {
-	err = db.QueryRow("select `status` from `" + tableStatus + "` order by `id` desc limit 1;").Scan(&id)
+func selectStatus() (status string, err error) {
+	err = db.QueryRow("select `status` from `" + tableStatus + "` order by `id` desc limit 1;").Scan(&status)
 	return
 }
