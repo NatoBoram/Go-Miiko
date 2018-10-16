@@ -137,12 +137,18 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			if len(ms) > 3 {
 
 				// Update status
-				setStatus(s, strings.Join(ms[3:], " "))
+				err := setStatus(s, strings.Join(ms[3:], " "))
+				if err != nil {
+					printDiscordError("Couldn't set the status to "+strings.Join(ms[3:], " ")+".", g, c, m, nil, err)
+				}
 
 			} else {
 
 				// set status
-				setStatus(s, "")
+				err := setStatus(s, "")
+				if err != nil {
+					printDiscordError("Couldn't clear the status at "+master.Username+"'s demand.", g, c, m, nil, err)
+				}
 			}
 
 		// set welcome

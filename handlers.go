@@ -272,7 +272,12 @@ func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 		if err != nil {
 			printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
 		}
-		setStatus(s, "bannir des bots")
+
+		err = setStatus(s, "bannir des bots")
+		if err != nil {
+			printDiscordError("Couldn't set the status to banning bots.", nil, nil, nil, m.User, err)
+		}
+
 		return
 	}
 

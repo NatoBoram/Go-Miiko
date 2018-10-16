@@ -129,7 +129,12 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		}
 	}
 
-	setStatus(s, "accueillir "+u.User.Username+" dans "+g.Name)
+	// Status
+	err = setStatus(s, "accueillir "+u.User.Username+" dans "+g.Name)
+	if err != nil {
+		printDiscordError("Couldn't set the status to welcoming someone.", g, c, m, nil, err)
+	}
+
 	return true
 }
 

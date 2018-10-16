@@ -32,7 +32,12 @@ func askForGuard(s *discordgo.Session, g *discordgo.Guild, u *discordgo.User) {
 		}
 
 	} else if u.ID != me.ID {
-		setStatus(s, "insulter "+u.Username)
+
+		// Set status
+		err = setStatus(s, "insulter "+u.Username)
+		if err != nil {
+			printDiscordError("Couldn't set the status to insulting a bot.", g, nil, nil, u, err)
+		}
 
 		// Fear the bot!
 		_, err = s.ChannelMessageSend(channel.ID, getWelcomeBotMessage(u.ID))
