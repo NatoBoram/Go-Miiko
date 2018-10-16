@@ -28,7 +28,7 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 
 	// Check the reactions
 	if singleReactionCount >= minReactions {
-		s.UpdateStatus(0, "épingler "+m.Author.Username)
+		setStatus(s, "épingler "+m.Author.Username)
 
 		// Pin it!
 		err = s.ChannelMessagePin(c.ID, m.ID)
@@ -72,7 +72,7 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 }
 
 func purgePin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message, messages []*discordgo.Message) {
-	s.UpdateStatus(0, "augmenter la difficulté de "+c.Name)
+	setStatus(s, "augmenter la difficulté de "+c.Name)
 
 	// Check minimum
 	channelMin, err := selectMinimumReactions(c)

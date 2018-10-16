@@ -129,7 +129,7 @@ func placeInAGuard(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channe
 		}
 	}
 
-	s.UpdateStatus(0, "accueillir "+u.User.Username+" dans "+g.Name)
+	setStatus(s, "accueillir "+u.User.Username+" dans "+g.Name)
 	return true
 }
 

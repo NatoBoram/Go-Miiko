@@ -100,7 +100,7 @@ func refresh(s *discordgo.Session) {
 	// End
 	duration := time.Since(start)
 	fmt.Println("Finished refresh :", duration.String())
-	s.UpdateStatus(0, "démarrer une belle journée")
+	setStatus(s, "démarrer une belle journée")
 }
 
 func createTables() (res sql.Result, err error) {

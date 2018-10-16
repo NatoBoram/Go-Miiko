@@ -137,15 +137,12 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			if len(ms) > 3 {
 
 				// Update status
-				s.UpdateStatus(0, strings.Join(ms[3:], " "))
+				setStatus(s, strings.Join(ms[3:], " "))
 
 			} else {
 
 				// set status
-				_, err := s.ChannelMessageSend(c.ID, "Vous devez spécifier un status.")
-				if err != nil {
-					printDiscordError("Couldn't help a set status command.", g, c, m, nil, err)
-				}
+				setStatus(s, "")
 			}
 
 		// set welcome
