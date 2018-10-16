@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"time"
 
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 
@@ -112,5 +114,38 @@ func addMinimumReactions(c *discordgo.Channel) (err error) {
 	} else if err == nil {
 		updateMinimumReactions(c, wheel.MaxInt(pinAbsoluteMinimum, min+1))
 	}
+	return
+}
+
+func setStatus(s *discordgo.Session, status string) (err error) {
+
+	// Insert the status in the database
+	res, err := insertStatus(status)
+	if err != nil {
+		return
+	}
+
+	// Get the last inserted ID
+	id, err := res.LastInsertId()
+	if err != nil {
+		return
+	}
+
+	go func() {
+
+		// Wait 60 seconds
+		time.Sleep(60 * time.Second)
+
+		// Delete the status
+		_, err = deleteStatus(int(id))
+		if err != nil {
+			fmt.Println("Couldn't delete a status from the database.")
+			fmt.Println(err.Error())
+		}
+
+		// Pick-up another status
+		refreshStatus(s)
+	}()
+
 	return
 }
