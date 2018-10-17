@@ -126,7 +126,7 @@ func setStatus(s *discordgo.Session, status string) (err error) {
 	}
 
 	// Apply it!
-	refreshStatus(s)
+	go refreshStatus(s)
 
 	// Get the last inserted ID
 	id, err := res.LastInsertId()
@@ -147,7 +147,7 @@ func setStatus(s *discordgo.Session, status string) (err error) {
 		}
 
 		// Pick-up another status
-		refreshStatus(s)
+		go refreshStatus(s)
 	}()
 
 	return
@@ -162,7 +162,7 @@ func setManualStatus(s *discordgo.Session, status string) (id int, err error) {
 	}
 
 	// Apply it!
-	refreshStatus(s)
+	go refreshStatus(s)
 
 	// Get the last inserted ID
 	id64, err := res.LastInsertId()

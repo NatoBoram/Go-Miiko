@@ -107,7 +107,7 @@ func refresh(s *discordgo.Session) {
 				fmt.Println("Couldn't delete a manual status.")
 				fmt.Println(err.Error())
 			}
-			refreshStatus(s)
+			go refreshStatus(s)
 		}
 
 		// Remove status for this guild
@@ -116,7 +116,7 @@ func refresh(s *discordgo.Session) {
 			fmt.Println("Couldn't delete a manual status.")
 			fmt.Println(err.Error())
 		}
-		refreshStatus(s)
+		go refreshStatus(s)
 	}
 
 	// Commit
