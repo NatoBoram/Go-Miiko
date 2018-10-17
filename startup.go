@@ -55,7 +55,14 @@ func refresh(s *discordgo.Session) {
 
 	// For each guilds
 	for _, guild := range s.State.Guilds {
-		s.UpdateStatus(0, "vérifier "+guild.Name)
+
+		// Status
+		statusGuild, err := setManualStatus(s, "vérifier "+guild.Name)
+		if err != nil {
+			fmt.Println("Couldn't set the status manually to checking guild.")
+			fmt.Println(err.Error())
+			continue
+		}
 
 		// For each channels
 		for _, channel := range guild.Channels {
@@ -75,7 +82,13 @@ func refresh(s *discordgo.Session) {
 				continue
 			}
 
-			s.UpdateStatus(0, "vérifier "+guild.Name+"/"+channel.Name)
+			// Status
+			statusChannel, err := setManualStatus(s, "vérifier #"+channel.Name)
+			if err != nil {
+				fmt.Println("Couldn't set the status manually to checking channel.")
+				fmt.Println(err.Error())
+				continue
+			}
 
 			// For each pin
 			for _, message := range pins {
@@ -87,7 +100,23 @@ func refresh(s *discordgo.Session) {
 					fmt.Println(err.Error())
 				}
 			}
+
+			// Remove status for this channel
+			_, err = deleteStatus(statusChannel)
+			if err != nil {
+				fmt.Println("Couldn't delete a manual status.")
+				fmt.Println(err.Error())
+			}
+			refreshStatus(s)
 		}
+
+		// Remove status for this guild
+		_, err = deleteStatus(statusGuild)
+		if err != nil {
+			fmt.Println("Couldn't delete a manual status.")
+			fmt.Println(err.Error())
+		}
+		refreshStatus(s)
 	}
 
 	// Commit
