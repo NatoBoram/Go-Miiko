@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -10,9 +8,7 @@ func isRole(s *discordgo.Session, g *discordgo.Guild, table string, m *discordgo
 
 	// Get role
 	role, err := getRole(s, g, table)
-	if err == sql.ErrNoRows {
-		return false, nil
-	} else if err != nil {
+	if err != nil {
 		return false, err
 	}
 
