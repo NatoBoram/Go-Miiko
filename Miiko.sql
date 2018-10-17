@@ -32,6 +32,12 @@ create table if not exists `channel-presentation` (
 	`channel` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
+-- Hall of fame
+create table if not exists `channel-fame` (
+	`server` varchar(32) primary key,
+	`channel` varchar(32) not null
+) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
 -- Messages
 
 -- Pins

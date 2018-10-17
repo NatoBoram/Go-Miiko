@@ -35,6 +35,18 @@ func getPresentationChannel(s *discordgo.Session, g *discordgo.Guild) (channel *
 	return s.Channel(channelID)
 }
 
+func getFameChannel(s *discordgo.Session, g *discordgo.Guild) (channel *discordgo.Channel, err error) {
+
+	// Select the hall of fame channel
+	channelID, err := selectFameChannel(g)
+	if err != nil {
+		return nil, err
+	}
+
+	// Turn it into a channel
+	return s.Channel(channelID)
+}
+
 // Roles
 
 func getRoles(s *discordgo.Session, g *discordgo.Guild) (admin *discordgo.Role, mod *discordgo.Role, light *discordgo.Role, absynthe *discordgo.Role, obsidian *discordgo.Role, shadow *discordgo.Role, eel *discordgo.Role, npc *discordgo.Role) {

@@ -12,6 +12,32 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	if len(ms) > 2 {
 		switch ms[2] {
 
+		// set fame
+		case "fame":
+			if len(ms) > 3 {
+				switch ms[3] {
+
+				// set fame channel
+				case "channel":
+					setFameChannelCommand(s, g, c, m)
+
+				// set fame ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a set fame command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// set fame
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a set fame command.", g, c, m, nil, err)
+				}
+			}
+
 		// set presentation
 		case "presentation":
 			if len(ms) > 3 {
@@ -195,7 +221,6 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	}
 }
 
-// setWelcomeChannelCommand sets the welcome channel and sends feedback to the user.
 func setWelcomeChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
 	s.ChannelTyping(c.ID)
 
@@ -240,6 +265,24 @@ func setPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *
 		fmt.Println("Guild :", g.Name)
 		fmt.Println("Channel :", c.Name)
 		fmt.Println(err.Error())
+		return
+	}
+}
+
+func setFameChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
+
+	// Set the welcome channel
+	_, err := setFameChannel(g, c)
+	if err != nil {
+		printDiscordError("Couldn't set the hall of fame channel.", g, c, m, nil, err)
+		return
+	}
+
+	// Send feedback
+	_, err = s.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
+	if err != nil {
+		printDiscordError("Couldn't announce the new hall of fame channel.", g, c, m, nil, err)
 		return
 	}
 }

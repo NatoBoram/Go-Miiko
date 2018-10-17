@@ -22,6 +22,7 @@ func createTableChannels() (res sql.Result, err error) {
 	channels := [...]string{
 		tableWelcome,
 		tablePresentation,
+		tableFame,
 	}
 
 	// Create them
@@ -382,4 +383,22 @@ func emptyStatus() (res sql.Result, err error) {
 func selectStatus() (status string, err error) {
 	err = db.QueryRow("select `status` from `" + tableStatus + "` order by `id` desc limit 1;").Scan(&status)
 	return
+}
+
+// Hall of Fame
+
+// Select Hall of Fame
+func selectFameChannel(g *discordgo.Guild) (id string, err error) {
+	err = db.QueryRow("select `channel` from `"+tableFame+"` where `server` = ?;", g.ID).Scan(&id)
+	return
+}
+
+// Insert Hall of Fame
+func insertFameChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableFame+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
+}
+
+// Update Hall of Fame
+func updateFameChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
+	return db.Exec("update `"+tableFame+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
 }

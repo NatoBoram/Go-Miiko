@@ -30,8 +30,10 @@ const (
 	tableNPC      = "role-npc"
 	tableSAR      = "roles-sar"
 
-	tableWelcome          = "channel-welcome"
-	tablePresentation     = "channel-presentation"
+	tableWelcome      = "channel-welcome"
+	tablePresentation = "channel-presentation"
+	tableFame         = "channel-fame"
+
 	tablePins             = "pins"
 	tableMinimumReactions = "minimum-reactions"
 	tableStatus           = "status"

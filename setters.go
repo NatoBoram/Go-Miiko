@@ -42,6 +42,22 @@ func setWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (sql.Result, er
 	return updateWelcomeChannel(g, c)
 }
 
+func setFameChannel(g *discordgo.Guild, c *discordgo.Channel) (sql.Result, error) {
+
+	// Check if there's a presentation channel
+	_, err := selectFameChannel(g)
+	if err == sql.ErrNoRows {
+
+		// Insert if there's none
+		return insertFameChannel(g, c)
+	} else if err != nil {
+		return nil, err
+	}
+
+	// Update if there's one
+	return updateFameChannel(g, c)
+}
+
 func setRole(g *discordgo.Guild, r *discordgo.Role, table string) (res sql.Result, err error) {
 
 	// Check if the role exists

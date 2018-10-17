@@ -10,6 +10,32 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	if len(ms) > 2 {
 		switch ms[2] {
 
+		// get fame
+		case "fame":
+			if len(ms) > 3 {
+				switch ms[3] {
+
+				// get fame channel
+				case "fame":
+					getFameChannelCommand(s, g, c, m)
+
+				// get fame ?
+				default:
+					_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[3]+"`."+"\n"+
+						"La commande disponible est `channel`.")
+					if err != nil {
+						printDiscordError("Couldn't help a get fame command.", g, c, m, nil, err)
+					}
+				}
+			} else {
+
+				// get presentation
+				_, err := s.ChannelMessageSend(c.ID, "La commande disponible est `channel`.")
+				if err != nil {
+					printDiscordError("Couldn't help a get fame command.", g, c, m, nil, err)
+				}
+			}
+
 		// get lover
 		case "lover":
 			getLoverCmd(s, g, c, m.Author)
@@ -121,7 +147,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		// get ?
 		default:
 			_, err := s.ChannelMessageSend(c.ID, "Erreur sur la commande `"+ms[2]+"`."+"\n"+
-				"Les commandes disponibles sont `crush`, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
+				"Les commandes disponibles sont `fame`, `crush`, ~~`points`~~, `presentation`, `role`, `roles`, `sars` et `welcome`.")
 			if err != nil {
 				printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 			}
@@ -176,6 +202,30 @@ func getPresentationChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *
 	s.ChannelMessageSend(c.ID, "Le salon de présentation est <#"+channel.ID+">.")
 	if err != nil {
 		printDiscordError("Couldn't send the presentation channel.", g, c, m, nil, err)
+		return
+	}
+}
+
+func getFameChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) {
+	s.ChannelTyping(c.ID)
+
+	// Get the hall of fame channel
+	channel, err := getFameChannel(s, g)
+	if err == sql.ErrNoRows {
+		_, err = s.ChannelMessageSend(c.ID, "Il n'y a pas de salon de renommée.")
+		if err != nil {
+			printDiscordError("Couldn't announce the absence of a hall of fame channel.", g, c, m, nil, err)
+		}
+		return
+	} else if err != nil {
+		printDiscordError("Couldn't get the hall of fame channel.", g, c, m, nil, err)
+		return
+	}
+
+	// Send the presentation channel
+	s.ChannelMessageSend(c.ID, "Le salon de renommée est <#"+channel.ID+">.")
+	if err != nil {
+		printDiscordError("Couldn't send the hall of fame channel.", g, c, m, nil, err)
 		return
 	}
 }
