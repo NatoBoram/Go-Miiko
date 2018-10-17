@@ -116,9 +116,9 @@ create table if not exists `status` (
 -- drop view `pins-count`;
 
 -- Pins Count
--- create view `pins-count` as
--- select `server`, `member`, count(`message`) as `count`
--- from `pins`
--- group by `server`, `member`
--- order by `server`, `count` desc
--- ;
+create or replace view `pins-count` as
+	select `server`, `member`, count(`message`) as `count`
+		from `pins`
+		group by `server`, `member` 
+		order by `server` asc,`count` desc, `member` asc
+;

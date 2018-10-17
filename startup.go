@@ -151,6 +151,7 @@ func createTables() (res sql.Result, err error) {
 		createTablePin,
 		createTableMinimumReactions,
 		createTableStatus,
+		createViewPinsCount,
 	}
 
 	// Create the tables

@@ -81,6 +81,11 @@ func createTableStatus() (res sql.Result, err error) {
 	return db.Exec("create table if not exists `" + tableStatus + "` (`id` int auto_increment primary key, `status` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
+// Pins Count
+func createViewPinsCount() (res sql.Result, err error) {
+	return db.Exec("create or replace view `pins-count` as select `server`, `member`, count(`message`) as `count` from `pins` group by `server`, `member` order by `server` asc, `count` desc, `member` asc;")
+}
+
 // Welcome Channel
 
 // Select Welcome Channel
