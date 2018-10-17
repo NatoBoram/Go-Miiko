@@ -16,7 +16,7 @@ func get(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 				switch ms[3] {
 
 				// get fame channel
-				case "fame":
+				case "channel":
 					getFameChannelCommand(s, g, c, m)
 
 				// get fame ?

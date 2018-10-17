@@ -214,7 +214,7 @@ func set(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	} else {
 
 		// set
-		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `presentation`, `role`, `sar` et `welcome`.")
+		_, err := s.ChannelMessageSend(c.ID, "Les commandes disponibles sont `fame`, `presentation`, `role`, `sar` et `welcome`.")
 		if err != nil {
 			printDiscordError("Couldn't help a set command.", g, c, m, nil, err)
 		}
