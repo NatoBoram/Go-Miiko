@@ -29,11 +29,6 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 	// Check the reactions
 	if singleReactionCount >= minReactions {
 
-		err = setStatus(s, "épingler "+m.Author.Username)
-		if err != nil {
-			printDiscordError("Couldn't set the status to pinning someone.", g, c, m, nil, err)
-		}
-
 		// Pin it!
 		err = s.ChannelMessagePin(c.ID, m.ID)
 		if err != nil {
@@ -63,6 +58,12 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		// Check if already in the database
 		_, err := selectPin(m)
 		if err == sql.ErrNoRows {
+
+			// Status
+			err = setStatus(s, "épingler "+m.Author.Username)
+			if err != nil {
+				printDiscordError("Couldn't set the status to pinning someone.", g, c, m, nil, err)
+			}
 
 			// Not previously pinned, time to insert it!
 			_, err = insertPin(g, m)
