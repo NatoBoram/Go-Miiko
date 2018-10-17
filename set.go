@@ -280,7 +280,7 @@ func setFameChannelCommand(s *discordgo.Session, g *discordgo.Guild, c *discordg
 	}
 
 	// Send feedback
-	_, err = s.ChannelMessageSend(c.ID, "Le salon de bienvenue est maintenant <#"+c.ID+">.")
+	_, err = s.ChannelMessageSend(c.ID, "Le salon de renommée est maintenant <#"+c.ID+">.")
 	if err != nil {
 		printDiscordError("Couldn't announce the new hall of fame channel.", g, c, m, nil, err)
 		return
