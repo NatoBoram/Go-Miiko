@@ -130,16 +130,46 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (me
 		return
 	}
 
-	// Don't ping the author
-	message, err = s.ChannelMessageSend(halloffame.ID, "**"+m.Author.Username+" :** "+m.Content)
+	// Get Member
+	member, err := s.GuildMember(g.ID, m.Author.ID)
 	if err != nil {
+		printDiscordError("Couldn't get a pinned member.", g, nil, m, nil, err)
 		return
 	}
 
-	// Change to a mention
-	message, err = s.ChannelMessageEdit(halloffame.ID, message.ID, m.Author.Mention()+" : "+m.Content)
+	// get colour
+	colour, err := getColour(s, g, member)
+
+	// get name
+	var author string
+	if member.Nick == "" {
+		author = member.User.Username
+	} else {
+		author = member.Nick
+	}
+
+	// Create Embed
+	embed := &discordgo.MessageEmbed{
+		Author: &discordgo.MessageEmbedAuthor{
+			URL:     "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
+			Name:    author,
+			IconURL: m.Author.AvatarURL(""),
+		},
+		Color:       colour,
+		Description: m.Content,
+		Fields: []*discordgo.MessageEmbedField{
+			&discordgo.MessageEmbedField{
+				Name:   "Salon",
+				Value:  "<#" + m.ChannelID + ">",
+				Inline: true,
+			},
+		},
+	}
+
+	// Send embed
+	_, err = s.ChannelMessageSendEmbed(halloffame.ID, embed)
 	if err != nil {
-		return
+		printDiscordError("Couldn't send an embed.", g, nil, m, nil, err)
 	}
 
 	return
