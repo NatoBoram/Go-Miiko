@@ -152,3 +152,25 @@ func setStatus(s *discordgo.Session, status string) (err error) {
 
 	return
 }
+
+func setManualStatus(s *discordgo.Session, status string) (id int, err error) {
+
+	// Insert the status in the database
+	res, err := insertStatus(status)
+	if err != nil {
+		return
+	}
+
+	// Apply it!
+	refreshStatus(s)
+
+	// Get the last inserted ID
+	id64, err := res.LastInsertId()
+	if err != nil {
+		return
+	}
+
+	go refreshStatus(s)
+	id = int(id64)
+	return
+}
