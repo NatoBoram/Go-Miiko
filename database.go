@@ -26,7 +26,7 @@ func createTableChannels() (res sql.Result, err error) {
 
 	// Create them
 	for _, channel := range channels {
-		res, err = db.Exec("create table if not exists `" + channel + "` (`server` varchar(32) primary key, `channel` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+		res, err = db.Exec("create table if not exists `" + channel + "` (`server` varchar(32) primary key, `channel` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 		if err != nil {
 			return
 		}
@@ -52,7 +52,7 @@ func createTableRoles() (res sql.Result, err error) {
 
 	// Create them
 	for _, role := range roles {
-		res, err = db.Exec("create table if not exists `" + role + "` (`server` varchar(32) primary key, `role` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+		res, err = db.Exec("create table if not exists `" + role + "` (`server` varchar(32) primary key, `role` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 		if err != nil {
 			return
 		}
@@ -63,22 +63,22 @@ func createTableRoles() (res sql.Result, err error) {
 
 // Self-Assignable Roles
 func createTableSAR() (res sql.Result, err error) {
-	return db.Exec("create table if not exists `" + tableSAR + "` (`server` varchar(32) not null, `role` varchar(32) not null, constraint `pk_roles_sar` primary key (`server`, `role`)) engine=InnoDB default charset=utf8mb4;")
+	return db.Exec("create table if not exists `" + tableSAR + "` (`server` varchar(32) not null, `role` varchar(32) not null, constraint `pk_roles_sar` primary key (`server`, `role`)) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
 // Pins
 func createTablePin() (res sql.Result, err error) {
-	return db.Exec("create table if not exists `" + tablePins + "` (`server` varchar(32) not null, `message` varchar(32) primary key, `member` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+	return db.Exec("create table if not exists `" + tablePins + "` (`server` varchar(32) not null, `message` varchar(32) primary key, `member` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
 // Minimum Reactions
 func createTableMinimumReactions() (res sql.Result, err error) {
-	return db.Exec("create table if not exists `" + tableMinimumReactions + "` (`channel` varchar(32) primary key, `minimum` int not null) engine=InnoDB default charset=utf8mb4;")
+	return db.Exec("create table if not exists `" + tableMinimumReactions + "` (`channel` varchar(32) primary key, `minimum` int not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
 // Status
 func createTableStatus() (res sql.Result, err error) {
-	return db.Exec("create table if not exists `" + tableStatus + "` (`id` int auto_increment primary key, `status` varchar(32) not null) engine=InnoDB default charset=utf8mb4;")
+	return db.Exec("create table if not exists `" + tableStatus + "` (`id` int auto_increment primary key, `status` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
 // Welcome Channel
