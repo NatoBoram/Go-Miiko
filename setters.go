@@ -136,7 +136,7 @@ func setStatus(s *discordgo.Session, status string) (err error) {
 
 	go func() {
 
-		// Wait 60 seconds
+		// Wait 60 seconds. Yeah, it's hard-coded.
 		time.Sleep(60 * time.Second)
 
 		// Delete the status
