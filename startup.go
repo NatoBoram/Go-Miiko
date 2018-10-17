@@ -130,9 +130,14 @@ func refresh(s *discordgo.Session) {
 	duration := time.Since(start)
 	fmt.Println("Finished refresh :", duration.String())
 
+	// Status!
 	err = setStatus(s, "démarrer une belle journée")
+	// There's some Twitch.tv hard-coding in Discord. Shame!
+	// If the hard-coding ever fades away, then I'll probably include this here.
+	// err = s.UpdateStreamingStatus(0, "GitLab", "https://gitlab.com/NatoBoram/Go-Miiko/")
 	if err != nil {
-		printDiscordError("Couldn't clear the status to beginning a beautiful day.", nil, nil, nil, nil, err)
+		fmt.Println("Couldn't clear the status to beginning a beautiful day.")
+		fmt.Println(err.Error())
 	}
 }
 
