@@ -34,7 +34,7 @@ func refreshStatus(s *discordgo.Session) {
 	// Actual update of the status
 	err = s.UpdateStatus(0, status)
 	if err != nil {
-		fmt.Println("Couldn't update the status")
+		fmt.Println("Couldn't update the status to", status)
 		fmt.Println(err.Error())
 	}
 }
