@@ -125,6 +125,9 @@ func setStatus(s *discordgo.Session, status string) (err error) {
 		return
 	}
 
+	// Apply it!
+	refreshStatus(s)
+
 	// Get the last inserted ID
 	id, err := res.LastInsertId()
 	if err != nil {
