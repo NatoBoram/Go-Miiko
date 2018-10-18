@@ -99,6 +99,16 @@ func refresh(s *discordgo.Session) {
 					fmt.Println("Couldn't execute a pin.")
 					fmt.Println(err.Error())
 				}
+
+				// Check if it wasn't already sent to the hall of fame
+				_, err = selectMessagesFamed(message)
+				if err == sql.ErrNoRows {
+
+
+				} else if err != nil {
+					fmt.Println("Couldn't select a message inside the hall of fame.")
+					fmt.Println(err.Error())
+				}
 			}
 
 			// Remove status for this channel
