@@ -51,7 +51,8 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Get the fame channel
 	fame, err := getFameChannel(s, guild)
-	if err != sql.ErrNoRows && err != nil {
+	if err == sql.ErrNoRows {
+	} else if err != nil {
 		printDiscordError("Couldn't get the hall of fame for this guild.", guild, channel, m.Message, nil, err)
 		return
 	} else if channel.ID == fame.ID && m.Message.Type == discordgo.MessageTypeChannelPinnedMessage {
