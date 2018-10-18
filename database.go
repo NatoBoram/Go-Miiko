@@ -87,6 +87,11 @@ func createViewPinsCount() (res sql.Result, err error) {
 	return db.Exec("create or replace view `pins-count` as select `server`, `member`, count(`message`) as `count` from `pins` group by `server`, `member` order by `server` asc, `count` desc, `member` asc;")
 }
 
+// Messages in hall of fame
+func createTableMessageFame() (res sql.Result, err error) {
+	return db.Exec("create table if not exists `" + tableMessagesFamed + "` (`message` varchar(32) primary key) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
+}
+
 // Welcome Channel
 
 // Select Welcome Channel
@@ -387,18 +392,31 @@ func selectStatus() (status string, err error) {
 
 // Hall of Fame
 
-// Select Hall of Fame
+// Select hall of hame channel
 func selectFameChannel(g *discordgo.Guild) (id string, err error) {
 	err = db.QueryRow("select `channel` from `"+tableFame+"` where `server` = ?;", g.ID).Scan(&id)
 	return
 }
 
-// Insert Hall of Fame
+// Insert hall of hame channel
 func insertFameChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("insert into `"+tableFame+"`(`server`, `channel`) values(?, ?);", g.ID, c.ID)
 }
 
-// Update Hall of Fame
+// Update hall of hame channel
 func updateFameChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Result, err error) {
 	return db.Exec("update `"+tableFame+"` set `channel` = ? where `server` = ?;", c.ID, g.ID)
+}
+
+// Messages in hall of fame
+
+// Insert in hall of Fame
+func insertMessagesFamed(g *discordgo.Guild, m *discordgo.Message) (res sql.Result, err error) {
+	return db.Exec("insert into `"+tableMessagesFamed+"`(`message`) values(?);", m.ID)
+}
+
+// Select from hall of fame
+func selectMessagesFamed(m *discordgo.Message) (id string, err error) {
+	err = db.QueryRow("select `message` from `"+tableMessagesFamed+"` where `message` = ?;", m.ID).Scan(&id)
+	return
 }
