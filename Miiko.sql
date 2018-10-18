@@ -38,6 +38,14 @@ create table if not exists `channel-fame` (
 	`channel` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
+-- Channel Data
+
+-- Minimum Reactions
+create table if not exists `minimum-reactions` (
+	`channel` varchar(32) primary key,
+	`minimum` int not null
+) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
 -- Messages
 
 -- Pins
@@ -47,10 +55,9 @@ create table if not exists `pins` (
 	`member` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
--- Minimum Reactions
-create table if not exists `minimum-reactions` (
-	`channel` varchar(32) primary key,
-	`minimum` int not null
+-- Hall of fame
+create table if not exists `messages-fame` (
+	`message` varchar(32) primary key,
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 -- Roles
@@ -118,13 +125,9 @@ create table if not exists `status` (
 
 -- Views
 
--- drop view `love`;
--- drop view `pins-count`;
-
 -- Pins Count
 create or replace view `pins-count` as
 	select `server`, `member`, count(`message`) as `count`
 		from `pins`
 		group by `server`, `member` 
-		order by `server` asc,`count` desc, `member` asc
-;
+		order by `server` asc,`count` desc, `member` asc;
