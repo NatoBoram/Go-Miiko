@@ -31,12 +31,24 @@ const (
 	tableSAR      = "roles-sar"
 
 	tableWelcome      = "channel-welcome"
-	tablePresentation = "channel-presentation"
+	tablePresentation = "channel-presentation" // To be changed with `introduction`.
 	tableFame         = "channel-fame"
+
+	tableMessagesFamed = "messages-famed"
 
 	tablePins             = "pins"
 	tableMinimumReactions = "minimum-reactions"
 	tableStatus           = "status"
+)
+
+// Columns
+const (
+	columnGuild   = "server" // To be changed with `guild`.
+	columnChannel = "channel"
+	columnMessage = "message"
+	columnUser    = "member"
+	columnRole    = "role"
+	columnStatus  = "status"
 )
 
 // Permissions
