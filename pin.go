@@ -122,11 +122,17 @@ func purgePin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m 
 	}
 }
 
-func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (message *discordgo.Message, err error) {
+func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (saved bool) {
 
-	// Get the channel
+	// Only text messages are transferred. Delete empty messages.
+	if m.Type != discordgo.MessageTypeDefault || m.Content == "" {
+		return
+	}
+
+	// Get the hall of fame
 	halloffame, err := getFameChannel(s, g)
-	if err != nil {
+	if err != nil || m.ChannelID == halloffame.ID {
+		printDiscordError("Couldn't get the hall of fame.", g, nil, m, nil, err)
 		return
 	}
 
@@ -137,10 +143,10 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (me
 		return
 	}
 
-	// get colour
-	colour, err := getColour(s, g, member)
+	// Get colour
+	colour, _ := getColour(s, g, member)
 
-	// get name
+	// Get name
 	var author string
 	if member.Nick == "" {
 		author = member.User.Username
@@ -150,12 +156,14 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (me
 
 	// Create Embed
 	embed := &discordgo.MessageEmbed{
+		Color: colour,
 		Author: &discordgo.MessageEmbedAuthor{
 			URL:     "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
 			Name:    author,
 			IconURL: m.Author.AvatarURL(""),
 		},
-		Color:       colour,
+		URL:         "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
+		Title:       "Message",
 		Description: m.Content,
 		Fields: []*discordgo.MessageEmbedField{
 			&discordgo.MessageEmbedField{
@@ -163,14 +171,67 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (me
 				Value:  "<#" + m.ChannelID + ">",
 				Inline: true,
 			},
+			&discordgo.MessageEmbedField{
+				Name:   "Auteur",
+				Value:  "<@" + m.Author.ID + ">",
+				Inline: true,
+			},
 		},
+	}
+
+	if len(m.Attachments) > 0 {
+
+		// For all attachments
+		for _, attachment := range m.Attachments {
+
+			// Thumbnail
+			if embed.Thumbnail == nil && attachment.Width >= 80 && attachment.Height >= 80 {
+				embed.Thumbnail = &discordgo.MessageEmbedThumbnail{
+					URL:    attachment.URL,
+					Width:  attachment.Width,
+					Height: attachment.Height,
+				}
+			}
+
+			// Fields
+			embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+				Name:   "Attachement",
+				Value:  "[" + attachment.Filename + "](" + attachment.URL + ")",
+				Inline: true,
+			})
+
+			// Image
+			if embed.Image == nil && attachment.Width >= 520 {
+				embed.Image = &discordgo.MessageEmbedImage{
+					URL:    attachment.URL,
+					Width:  attachment.Width,
+					Height: attachment.Height,
+				}
+			}
+		}
+	}
+
+	// Footer
+	footer := &discordgo.MessageEmbedFooter{
+		IconURL: discordgo.EndpointGuildIcon(g.ID, g.Icon),
+	}
+	for _, reaction := range m.Reactions {
+		footer.Text += "<:" + reaction.Emoji.APIName() + ">"
 	}
 
 	// Send embed
 	_, err = s.ChannelMessageSendEmbed(halloffame.ID, embed)
 	if err != nil {
 		printDiscordError("Couldn't send an embed.", g, nil, m, nil, err)
+		return
 	}
 
-	return
+	// Save it in the database
+	_, err = insertMessagesFamed(g, m)
+	if err != nil {
+		printDiscordError("Couldn't insert a famed message in the hall of fame!", g, nil, m, nil, err)
+		return
+	}
+
+	return true
 }
