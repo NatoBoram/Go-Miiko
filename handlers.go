@@ -19,11 +19,6 @@ func addHandlers(s *discordgo.Session) {
 
 func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	// Myself? Super User?
-	if m.Author.ID == me.ID || m.Author.Discriminator == "0000" {
-		return
-	}
-
 	// Flow Control
 	done := false
 
@@ -38,10 +33,10 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Forward to Master.
-	done = forward(s, channel, m.Message)
-	if done {
-		return
-	}
+	// done = forward(s, channel, m.Message)
+	// if done {
+	//	return
+	// }
 
 	// Get guild structure
 	guild, err := s.State.Guild(channel.GuildID)
@@ -51,6 +46,26 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		fmt.Println("Author : " + m.Author.Username)
 		fmt.Println("Message : " + m.Content)
 		fmt.Println(err.Error())
+		return
+	}
+
+	// Get the fame channel
+	fame, err := getFameChannel(s, guild)
+	if err != sql.ErrNoRows && err != nil {
+		printDiscordError("Couldn't get the hall of fame for this guild.", guild, channel, m.Message, nil, err)
+		return
+	} else if channel.ID == fame.ID && m.Message.Type == discordgo.MessageTypeChannelPinnedMessage {
+
+		// "Miiko pinned a message to this channel. See all the pins."
+		err = s.ChannelMessageDelete(channel.ID, m.Message.ID)
+		if err != nil {
+			printDiscordError("Couldn't delete a message.", guild, channel, m.Message, nil, err)
+		}
+		return
+	}
+
+	// Myself? Super User?
+	if m.Author.ID == me.ID || m.Author.Discriminator == "0000" {
 		return
 	}
 
