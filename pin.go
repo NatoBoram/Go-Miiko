@@ -219,7 +219,7 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		}
 	}
 
-	// Thumbnail
+	// Thumbnail. 80x80.
 	if smallest != nil {
 		embed.Thumbnail = &discordgo.MessageEmbedThumbnail{
 			URL:    smallest.URL,
@@ -228,7 +228,7 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		}
 	}
 
-	// Image
+	// Image. 400x300.
 	if largest != nil {
 		embed.Image = &discordgo.MessageEmbedImage{
 			URL:    largest.URL,
