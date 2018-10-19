@@ -257,10 +257,12 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		for _, reaction := range m.Reactions {
 
 			// Check if RequireColons
-			if reaction.Emoji.RequireColons {
-				emojiField.Value += "<:" + reaction.Emoji.APIName() + ">"
+			if reaction.Emoji.ID != "" && reaction.Emoji.Name != "" {
+				emojiField.Value += "<:" + reaction.Emoji.Name + ":" + reaction.Emoji.ID + ">"
+			} else if reaction.Emoji.Name != "" {
+				emojiField.Value += reaction.Emoji.Name
 			} else {
-				emojiField.Value += reaction.Emoji.APIName()
+				emojiField.Value += "<:" + reaction.Emoji.ID + ">"
 			}
 		}
 		embed.Fields = append(embed.Fields, emojiField)
