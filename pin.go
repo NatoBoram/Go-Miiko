@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
@@ -145,17 +144,17 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		// printDiscordError("Couldn't get a pinned member.", g, nil, m, nil, err)
 	} else {
 
-	// Get colour
+		// Get colour
 		colour, _ = getColour(s, g, member)
 
-	// Get name
+		// Get name
 		if member == nil {
 			name = m.Author.Username
 		} else if member.Nick == "" {
 			name = member.User.Username
-	} else {
+		} else {
 			name = member.Nick
-	}
+		}
 	}
 
 	// Create Embed
@@ -258,28 +257,36 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 	// Emoji Field
 	if len(m.Reactions) > 0 {
 		emojiField := &discordgo.MessageEmbedField{
-			Name: "Réactions",
+			Name:   "Réactions",
+			Inline: true,
 		}
 
 		// For each reactions
 		for _, reaction := range m.Reactions {
 
-			// Check if RequireColons
-			if reaction.Emoji.ID != "" && reaction.Emoji.Name != "" {
-				emojiField.Value += "<:" + reaction.Emoji.Name + ":" + reaction.Emoji.ID + ">"
-			} else if reaction.Emoji.Name != "" {
+			// Use only emojis
+			if reaction.Emoji.ID == "" {
 				emojiField.Value += reaction.Emoji.Name
-			} else {
-				emojiField.Value += "<:" + reaction.Emoji.ID + ">"
 			}
 		}
-		embed.Fields = append(embed.Fields, emojiField)
+
+		// Protect against empty reactions
+		if emojiField.Value != "" {
+			embed.Fields = append(embed.Fields, emojiField)
+		}
+	}
+
+	// Get the timestamp of a message.
+	timestamp, err := m.Timestamp.Parse()
+	if err != nil {
+		printDiscordError("Couldn't parse the timestamp of a message. Please update DiscordGo.", g, nil, m, nil, err)
+		return
 	}
 
 	// Footer
 	embed.Footer = &discordgo.MessageEmbedFooter{
 		IconURL: discordgo.EndpointGuildIcon(g.ID, g.Icon),
-		Text:    wheel.ToFrenchDate(time.Now()),
+		Text:    wheel.ToFrenchDate(timestamp),
 	}
 
 	// Send embed
