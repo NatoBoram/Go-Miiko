@@ -185,7 +185,7 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 
 		// Play with sizes
 		if smallest == nil && largest == nil {
-			if attachment.Width > attachment.Height && attachment.Width > 80 {
+			if attachment.Width > attachment.Height || attachment.Width > 300 {
 				largest = attachment
 			} else {
 				smallest = attachment
