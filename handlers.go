@@ -53,8 +53,9 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fame, err := getFameChannel(s, guild)
 	if err == sql.ErrNoRows {
 	} else if err != nil {
+
+		// Maybe the channel was deleted. Do not return.
 		printDiscordError("Couldn't get the hall of fame for this guild.", guild, channel, m.Message, nil, err)
-		return
 	} else if channel.ID == fame.ID && m.Message.Type == discordgo.MessageTypeChannelPinnedMessage {
 
 		// "Miiko pinned a message to this channel. See all the pins."
@@ -266,8 +267,8 @@ func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 	// Don't announce it if its username contains spam.
 	for _, username := range censoredUsernames {
 		if strings.Contains(strings.ToLower(m.User.Username), username) {
-		return
-	}
+			return
+		}
 	}
 
 	// Get guild
@@ -289,19 +290,19 @@ func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 		if strings.Contains(strings.ToLower(m.User.Username), username) {
 
 			// Ban the bot!
-		err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
-		if err != nil {
-			printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
-		}
+			err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
+			if err != nil {
+				printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
+			}
 
 			// Nice status
-		err = setStatus(s, "bannir des bots")
-		if err != nil {
-			printDiscordError("Couldn't set the status to banning bots.", nil, nil, nil, m.User, err)
-		}
+			err = setStatus(s, "bannir des bots")
+			if err != nil {
+				printDiscordError("Couldn't set the status to banning bots.", nil, nil, nil, m.User, err)
+			}
 
-		return
-	}
+			return
+		}
 	}
 
 	// Get guild
