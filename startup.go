@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"gitlab.com/NatoBoram/Go-Miiko/wheel"
 )
 
 func refresh(s *discordgo.Session) {
@@ -15,7 +16,7 @@ func refresh(s *discordgo.Session) {
 
 	// Start
 	start := time.Now()
-	fmt.Println("Begin refresh :", start.String())
+	fmt.Println("Begin refresh :", wheel.ToFrenchDateTime(start))
 
 	// Begin
 	tx, err := db.Begin()
