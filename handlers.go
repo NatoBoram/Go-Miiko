@@ -263,9 +263,11 @@ func reactHandler(s *discordgo.Session, m *discordgo.MessageReactionAdd) {
 
 func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 
-	// Don't announce it if its username contains "discord.gg".
-	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") {
+	// Don't announce it if its username contains spam.
+	for _, username := range censoredUsernames {
+		if strings.Contains(strings.ToLower(m.User.Username), username) {
 		return
+	}
 	}
 
 	// Get guild
@@ -282,22 +284,24 @@ func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 
 func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 
-	// Ban those whose username contains "discord.gg".
-	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") ||
-		strings.Contains(strings.ToLower(m.User.Username), "free") ||
-		strings.Contains(strings.ToLower(m.User.Username), ".tv") ||
-		strings.Contains(strings.ToLower(m.User.Username), ".com") {
+	// Ban those whose username contains spam.
+	for _, username := range censoredUsernames {
+		if strings.Contains(strings.ToLower(m.User.Username), username) {
+
+			// Ban the bot!
 		err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
 		if err != nil {
 			printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
 		}
 
+			// Nice status
 		err = setStatus(s, "bannir des bots")
 		if err != nil {
 			printDiscordError("Couldn't set the status to banning bots.", nil, nil, nil, m.User, err)
 		}
 
 		return
+	}
 	}
 
 	// Get guild

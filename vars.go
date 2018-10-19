@@ -20,3 +20,8 @@ var popcornStrings = [...]string{
 	"maïs éclaté",
 	"🍿",
 }
+
+var censoredUsernames = [...]string{
+	"discord.gg",
+	"twitch.tv",
+}
