@@ -132,22 +132,30 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		return
 	}
 
+	// Just in case `GuildMember` fails
+	var (
+		colour = colourNPC
+		name   = m.Author.Username
+	)
+
 	// Get Member
 	member, err := s.GuildMember(g.ID, m.Author.ID)
 	if err != nil {
-		printDiscordError("Couldn't get a pinned member.", g, nil, m, nil, err)
-		return
-	}
+		// Probably just a member that's dead. Nothing to output.
+		// printDiscordError("Couldn't get a pinned member.", g, nil, m, nil, err)
+	} else {
 
 	// Get colour
-	colour, _ := getColour(s, g, member)
+		colour, _ = getColour(s, g, member)
 
 	// Get name
-	var author string
-	if member.Nick == "" {
-		author = member.User.Username
+		if member == nil {
+			name = m.Author.Username
+		} else if member.Nick == "" {
+			name = member.User.Username
 	} else {
-		author = member.Nick
+			name = member.Nick
+	}
 	}
 
 	// Create Embed
@@ -155,7 +163,7 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		Color: colour,
 		Author: &discordgo.MessageEmbedAuthor{
 			URL:     "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
-			Name:    author,
+			Name:    name,
 			IconURL: m.Author.AvatarURL(""),
 		},
 		URL:         "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
