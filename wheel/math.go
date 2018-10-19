@@ -88,3 +88,8 @@ func ToFrenchDate(t time.Time) string {
 
 	return strconv.Itoa(day) + " " + smonth + " " + strconv.Itoa(year)
 }
+
+// ToFrenchDateTime takes a time and transforms it into a human-readable format.
+func ToFrenchDateTime(t time.Time) string {
+	return ToFrenchDate(t) + " " + strconv.Itoa(t.Hour()) + ":" + strconv.Itoa(t.Minute())
+}
