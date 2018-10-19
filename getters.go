@@ -166,6 +166,12 @@ func getSARs(s *discordgo.Session, g *discordgo.Guild) (roles []*discordgo.Role,
 // Colours
 func getColour(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member) (colour int, err error) {
 
+	// Check if the member is null.
+	// This function should be re-written to accept the user then get its member.
+	if m == nil {
+		return colourNPC, err
+	}
+
 	admin, err := isAdmin(s, g, m)
 	if admin {
 		return colourAdministrator, err
