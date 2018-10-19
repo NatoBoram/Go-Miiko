@@ -51,6 +51,7 @@ create table if not exists `minimum-reactions` (
 -- Pins
 create table if not exists `pins` (
 	`server` varchar(32) not null,
+	`channel` varchar(32) not null,
 	`message` varchar(32) primary key,
 	`member` varchar(32) not null
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;

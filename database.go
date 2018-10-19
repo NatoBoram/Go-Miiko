@@ -69,7 +69,7 @@ func createTableSAR() (res sql.Result, err error) {
 
 // Pins
 func createTablePin() (res sql.Result, err error) {
-	return db.Exec("create table if not exists `" + tablePins + "` (`server` varchar(32) not null, `message` varchar(32) primary key, `member` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
+	return db.Exec("create table if not exists `" + tablePins + "` (`server` varchar(32) not null, `channel` varchar(32) not null, `message` varchar(32) primary key, `member` varchar(32) not null) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;")
 }
 
 // Minimum Reactions
@@ -113,8 +113,14 @@ func updateWelcomeChannel(g *discordgo.Guild, c *discordgo.Channel) (res sql.Res
 // Pins
 
 // Select Pin
-func selectPin(m *discordgo.Message) (id string, err error) {
-	err = db.QueryRow("select `message` from `pins` where `message` = ?;", m.ID).Scan(&id)
+func selectPin(m *discordgo.Message) (channelID string, messageID string, err error) {
+	err = db.QueryRow("select `channel`, `message` from `pins` where `message` = ?;", m.ID).Scan(&channelID, &messageID)
+	return
+}
+
+// Select all pins from a guild
+func selectPins(g *discordgo.Guild) (rows *sql.Rows, err error) {
+	rows, err = db.Query("select `channel`, `message` from `pins` where `server` = ? order by `message` asc, `server` asc, `channel` asc;", g.ID)
 	return
 }
 
@@ -151,12 +157,9 @@ func selectLovers(g *discordgo.Guild) (members []string, err error) {
 }
 
 // Insert Pin
-func insertPin(g *discordgo.Guild, m *discordgo.Message) (res sql.Result, err error) {
-	return db.Exec("insert into `pins`(`server`, `message`, `member`) values(?, ?, ?)", g.ID, m.ID, m.Author.ID)
+func insertPin(g *discordgo.Guild, c *discordgo.Channel, m *discordgo.Message) (res sql.Result, err error) {
+	return db.Exec("insert into `pins`(`server`, `channel`, `message`, `member`) values(?, ?, ?, ?)", g.ID, c.ID, m.ID, m.Author.ID)
 }
-
-// Update Pin
-// Not needed.
 
 // Delete Pin
 func deletePin(m *discordgo.Message) (res sql.Result, err error) {

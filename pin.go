@@ -56,7 +56,7 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 		}
 
 		// Check if already in the database
-		_, err := selectPin(m)
+		_, _, err := selectPin(m)
 		if err == sql.ErrNoRows {
 
 			// Status
@@ -66,15 +66,10 @@ func pin(s *discordgo.Session, g *discordgo.Guild, c *discordgo.Channel, m *disc
 			}
 
 			// Throw it in the hall of fame
-			savePin(s, g, m)
-			if err == sql.ErrNoRows {
-				// There's no hall of fame in this server
-			} else if err != nil {
-				printDiscordError("Couldn't throw a message in the hall of fame.", g, c, m, nil, err)
-			}
+			go savePin(s, g, m)
 
 			// Not previously pinned, time to insert it!
-			_, err = insertPin(g, m)
+			_, err = insertPin(g, c, m)
 			if err != nil {
 				printDiscordError("Couldn't insert a pin.", g, c, m, nil, err)
 			}

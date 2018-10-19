@@ -45,7 +45,7 @@ func refresh(s *discordgo.Session) {
 	fmt.Println("Deleted", rows, "pins.")
 
 	// Prepare
-	insert, err := tx.Prepare("insert into `pins`(`server`, `member`, `message`) values(?, ?, ?)")
+	insert, err := tx.Prepare("insert into `pins`(`server`, `channel`, `member`, `message`) values(?, ?, ?, ?)")
 	if err != nil {
 		fmt.Println("Couldn't prepare pins.")
 		fmt.Println(err.Error())
@@ -75,10 +75,8 @@ func refresh(s *discordgo.Session) {
 			// Pins
 			pins, err := s.ChannelMessagesPinned(channel.ID)
 			if err != nil {
-				fmt.Println("Couldn't get a channel's pins.")
-				fmt.Println("Guild :", guild.Name)
-				fmt.Println("Channel :", channel.Name)
-				fmt.Println(err.Error())
+				// Probably missing permission. Logging it isn't useful.
+				// printDiscordError("Couldn't get a channel's pins.", guild, channel, nil, nil, err)
 				continue
 			}
 
@@ -94,7 +92,7 @@ func refresh(s *discordgo.Session) {
 			for _, message := range pins {
 
 				// Insert it!
-				_, err := insert.Exec(guild.ID, message.Author.ID, message.ID)
+				_, err := insert.Exec(guild.ID, channel.ID, message.Author.ID, message.ID)
 				if err != nil {
 					fmt.Println("Couldn't execute a pin.")
 					fmt.Println(err.Error())
@@ -104,6 +102,8 @@ func refresh(s *discordgo.Session) {
 				_, err = selectMessagesFamed(message)
 				if err == sql.ErrNoRows {
 
+					// Fame it!
+					// go savePin(s, guild, message)
 
 				} else if err != nil {
 					fmt.Println("Couldn't select a message inside the hall of fame.")
@@ -149,6 +149,72 @@ func refresh(s *discordgo.Session) {
 		fmt.Println("Couldn't clear the status to beginning a beautiful day.")
 		fmt.Println(err.Error())
 	}
+
+	// Now that pins are refreshed, it's time to refresh the hall of fame.
+	go refreshHallOfFame(s)
+}
+
+func refreshHallOfFame(s *discordgo.Session) {
+
+	// For each guilds
+	for _, guild := range s.State.Guilds {
+		go refreshHallOfFameGuild(s, guild)
+	}
+}
+
+func refreshHallOfFameGuild(s *discordgo.Session, g *discordgo.Guild) {
+
+	// Select all pins
+	rows, err := selectPins(g)
+	if err != nil {
+		fmt.Println("Couldn't fetch pins for an entire server.")
+		fmt.Println(err.Error())
+		return
+	}
+	defer rows.Close()
+
+	// For each pins
+	for rows.Next() {
+
+		var (
+			channelID string
+			messageID string
+		)
+
+		err := rows.Scan(&channelID, &messageID)
+		if err != nil {
+			fmt.Println("Couldn't fetch the next guild's pins.")
+			fmt.Println(err.Error())
+			continue
+		}
+
+		// Actual process
+		message, err := s.ChannelMessage(channelID, messageID)
+		if err != nil {
+			printDiscordError("Couldn't get a message from a pin.", g, nil, nil, nil, err)
+			continue
+		}
+
+		// Check before faming a message
+		_, err = selectMessagesFamed(message)
+		if err == sql.ErrNoRows {
+
+			// Fame it!
+			go savePin(s, g, message)
+
+		} else if err != nil {
+			fmt.Println("Couldn't select a famed message.")
+			fmt.Println(err.Error())
+			continue
+		}
+	}
+
+	// Check for errors
+	err = rows.Err()
+	if err != nil {
+		fmt.Println("Something went wrong when refreshing the hall of fame.")
+		fmt.Println(err.Error())
+	}
 }
 
 func createTables() (res sql.Result, err error) {
@@ -162,6 +228,7 @@ func createTables() (res sql.Result, err error) {
 		createTableMinimumReactions,
 		createTableStatus,
 		createViewPinsCount,
+		createTableMessageFame,
 	}
 
 	// Create the tables
