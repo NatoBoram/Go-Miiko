@@ -258,6 +258,7 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 	if len(m.Reactions) > 0 {
 		emojiField := &discordgo.MessageEmbedField{
 			Name:   "Réactions",
+			Value:  " ",
 			Inline: true,
 		}
 
@@ -266,12 +267,12 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 
 			// Use only emojis
 			if reaction.Emoji.ID == "" {
-				emojiField.Value += reaction.Emoji.Name
+				emojiField.Value += reaction.Emoji.Name + " "
 			}
 		}
 
 		// Protect against empty reactions
-		if emojiField.Value != "" {
+		if emojiField.Value != " " {
 			embed.Fields = append(embed.Fields, emojiField)
 		}
 	}
