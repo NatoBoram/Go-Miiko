@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"gitlab.com/NatoBoram/Go-Miiko/wheel"
@@ -160,58 +161,115 @@ func savePin(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Message) (sa
 		URL:         "https://canary.discordapp.com/channels/" + g.ID + "/" + m.ChannelID + "/" + m.ID + "/",
 		Title:       "Message",
 		Description: m.Content,
-		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{
-				Name:   "Salon",
-				Value:  "<#" + m.ChannelID + ">",
-				Inline: true,
-			},
-			&discordgo.MessageEmbedField{
-				Name:   "Auteur",
-				Value:  "<@" + m.Author.ID + ">",
-				Inline: true,
-			},
-		},
 	}
 
-	if len(m.Attachments) > 0 {
+	var (
+		smallest *discordgo.MessageAttachment
+		largest  *discordgo.MessageAttachment
+	)
 
-		// For all attachments
-		for _, attachment := range m.Attachments {
+	// For all attachments
+	for _, attachment := range m.Attachments {
 
-			// Thumbnail
-			if embed.Thumbnail == nil && attachment.Width >= 80 && attachment.Height >= 80 {
-				embed.Thumbnail = &discordgo.MessageEmbedThumbnail{
-					URL:    attachment.URL,
-					Width:  attachment.Width,
-					Height: attachment.Height,
-				}
+		// Fields
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+			Name:   "Attachement",
+			Value:  "[" + attachment.Filename + "](" + attachment.URL + ")",
+			Inline: true,
+		})
+
+		// Check if image
+		if attachment.Height == 0 || attachment.Width == 0 {
+			continue
+		}
+
+		// Play with sizes
+		if smallest == nil && largest == nil {
+			if attachment.Width > attachment.Height && attachment.Width > 80 {
+				largest = attachment
+			} else {
+				smallest = attachment
 			}
-
-			// Fields
-			embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-				Name:   "Attachement",
-				Value:  "[" + attachment.Filename + "](" + attachment.URL + ")",
-				Inline: true,
-			})
-
-			// Image
-			if embed.Image == nil && attachment.Width >= 520 {
-				embed.Image = &discordgo.MessageEmbedImage{
-					URL:    attachment.URL,
-					Width:  attachment.Width,
-					Height: attachment.Height,
-				}
+		} else if smallest == nil {
+			if attachment.Height*attachment.Width > largest.Height*largest.Width {
+				smallest, largest = largest, attachment
+			} else {
+				smallest = attachment
+			}
+		} else if largest == nil {
+			if attachment.Height*attachment.Width < smallest.Height*smallest.Width {
+				smallest, largest = attachment, smallest
+			} else {
+				largest = attachment
+			}
+		} else {
+			if attachment.Height*attachment.Width < smallest.Height*smallest.Width {
+				smallest = attachment
+			} else if attachment.Height*attachment.Width > largest.Height*largest.Width {
+				largest = attachment
 			}
 		}
 	}
 
-	// Footer
-	footer := &discordgo.MessageEmbedFooter{
-		IconURL: discordgo.EndpointGuildIcon(g.ID, g.Icon),
+	// Thumbnail
+	if smallest != nil {
+		embed.Thumbnail = &discordgo.MessageEmbedThumbnail{
+			URL:    smallest.URL,
+			Width:  smallest.Width,
+			Height: smallest.Height,
+		}
 	}
-	for _, reaction := range m.Reactions {
-		footer.Text += "<:" + reaction.Emoji.APIName() + ">"
+
+	// Image
+	if largest != nil {
+		embed.Image = &discordgo.MessageEmbedImage{
+			URL:    largest.URL,
+			Width:  largest.Width,
+			Height: largest.Height,
+		}
+	}
+
+	// Channel
+	embed.Fields = append(embed.Fields,
+		&discordgo.MessageEmbedField{
+			Name:   "Salon",
+			Value:  "<#" + m.ChannelID + ">",
+			Inline: true,
+		},
+	)
+
+	// Author
+	embed.Fields = append(embed.Fields,
+		&discordgo.MessageEmbedField{
+			Name:   "Auteur",
+			Value:  "<@" + m.Author.ID + ">",
+			Inline: true,
+		},
+	)
+
+	// Emoji Field
+	if len(m.Reactions) > 0 {
+		emojiField := &discordgo.MessageEmbedField{
+			Name: "Réactions",
+		}
+
+		// For each reactions
+		for _, reaction := range m.Reactions {
+
+			// Check if RequireColons
+			if reaction.Emoji.RequireColons {
+				emojiField.Value += "<:" + reaction.Emoji.APIName() + ">"
+			} else {
+				emojiField.Value += reaction.Emoji.APIName()
+			}
+		}
+		embed.Fields = append(embed.Fields, emojiField)
+	}
+
+	// Footer
+	embed.Footer = &discordgo.MessageEmbedFooter{
+		IconURL: discordgo.EndpointGuildIcon(g.ID, g.Icon),
+		Text:    wheel.ToFrenchDate(time.Now()),
 	}
 
 	// Send embed
