@@ -283,7 +283,10 @@ func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 
 	// Ban those whose username contains "discord.gg".
-	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") {
+	if strings.Contains(strings.ToLower(m.User.Username), "discord.gg") ||
+		strings.Contains(strings.ToLower(m.User.Username), "free") ||
+		strings.Contains(strings.ToLower(m.User.Username), ".tv") ||
+		strings.Contains(strings.ToLower(m.User.Username), ".com") {
 		err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
 		if err != nil {
 			printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
