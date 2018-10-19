@@ -39,7 +39,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		}
 
 		// Create an invite structure
-		var invStruct discordgo.Invite
+		/* var invStruct discordgo.Invite
 		invStruct.Temporary = true
 
 		// Create an invite to WelcomeChannel
@@ -62,7 +62,7 @@ func waitComeBack(s *discordgo.Session, g *discordgo.Guild, m *discordgo.Member)
 		_, err = s.ChannelMessageSend(privateChannel.ID, getPrivateByeMessage(invite.Code))
 		if err != nil {
 			printDiscordError("Couldn't send a message to "+m.User.Username+"!", g, channel, nil, m.User, err)
-		}
+		} */
 	}
 }
 
