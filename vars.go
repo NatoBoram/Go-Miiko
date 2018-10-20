@@ -22,7 +22,7 @@ var popcornStrings = [...]string{
 }
 
 var censoredUsernames = [...]string{
-	"discord.gg",
-	"twitch.tv",
-	"twitter.com",
+	".gg",
+	".tv",
+	".com",
 }
