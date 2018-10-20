@@ -286,11 +286,11 @@ func leaveHandler(s *discordgo.Session, m *discordgo.GuildMemberRemove) {
 func joinHandler(s *discordgo.Session, m *discordgo.GuildMemberAdd) {
 
 	// Ban those whose username contains spam.
-	for _, username := range censoredUsernames {
-		if strings.Contains(strings.ToLower(m.User.Username), username) {
+	for _, censored := range censoredUsernames {
+		if strings.Contains(strings.ToLower(m.User.Username), censored) {
 
 			// Ban the bot!
-			err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Lien d'invitation dans le username.", 7)
+			err := s.GuildBanCreateWithReason(m.GuildID, m.User.ID, "Son nom d'utilisateur contenait \""+censored+"\".", 7)
 			if err != nil {
 				printDiscordError("Couldn't ban a bot spammer.", nil, nil, nil, m.User, err)
 			}

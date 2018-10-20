@@ -142,14 +142,14 @@ func refresh(s *discordgo.Session) {
 	fmt.Println("Finished refresh :", duration.String())
 
 	// Status!
-	err = setStatus(s, "démarrer une belle journée")
+	go refreshStatus(s)
 	// There's some Twitch.tv hard-coding in Discord. Shame!
 	// If the hard-coding ever fades away, then I'll probably include this here.
 	// err = s.UpdateStreamingStatus(0, "GitLab", "https://gitlab.com/NatoBoram/Go-Miiko/")
-	if err != nil {
-		fmt.Println("Couldn't clear the status to beginning a beautiful day.")
-		fmt.Println(err.Error())
-	}
+	// if err != nil {
+	// 	fmt.Println("Couldn't clear the status to beginning a beautiful day.")
+	// 	fmt.Println(err.Error())
+	// }
 
 	// Now that pins are refreshed, it's time to refresh the hall of fame.
 	go refreshHallOfFame(s)
