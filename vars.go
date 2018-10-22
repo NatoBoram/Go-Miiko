@@ -25,4 +25,5 @@ var censoredUsernames = [...]string{
 	".gg",
 	".tv",
 	".com",
+	".me",
 }
